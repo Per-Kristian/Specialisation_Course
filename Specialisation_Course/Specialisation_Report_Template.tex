@@ -77,7 +77,7 @@ NTNU in Gj\o{}ovik
 \chapter{Introduction}
 Biometrics is increasingly utilized for user authentication, with fingerprint readers being built into personal devices such as smart phones and laptops.
 Biometric systems based on modalities such as fingerprint, hand print, iris, retina and facial recognition are to varying degrees now known to the general public.
-A common feature of these modalities are that they are \textit{physiological} -- they are based on our individual anatomy.
+A common feature of these modalities are that they are \textit{biological} -- they are based on our individual anatomy.
 On the other hand, \textit{behavioral} biometric systems are not yet as widely used as its physiological counterpart, largely due to lesser reliability and being more prone to changes over time.
 
 Behavioral biometrics are, as the name implies, based on the behavior of an individual. Behavioral modalities include (but are not limited to) gait recognition, voice recognition, mouse dynamics and keyboard dynamics, with the latter being the focus of this literature study.
@@ -85,30 +85,30 @@ Behavioral biometrics are, as the name implies, based on the behavior of an indi
 \textit{Identification} means determining whether or not a person is a known user of a system, and if so, who it is.
 \textit{Classification} is the process of determining who a person is within a set of possible individuals, while \textit{authentication} is verifying whether or not a person is who they claim to be.
 
-These systems may be used either to \textit{grant access} or to \textit{revoke access}.
-Similar to password based authentication, keystroke dynamics can be utilized for initial \textit{static (one-time) authentication}, granting a legal user access to their system.
-One approach to this kind of authentication is having a user write a predetermined and fixed sample text of which typing features are extracted to form a probe template to be compared to their previously enrolled reference template.
+These systems may be used either to \textit{give access} or to \textit{remove access}.
+Similar to password based authentication, keystroke dynamics can be utilized for initial \textit{static (one-time) authentication}, \textit{giving} a legal user access to their system if it is apparent that the typing user is the \textit{genuine} user of the claimed identity.
+One approach to this kind of authentication is having a user write a predetermined and fixed sample text of which typing features are extracted to form a probe to be compared to their previously enrolled reference.
 The text may be short or long, depending on the authentication system at hand.  
 An example of a short text may the user's password, while long text could be a short news article.
 
-\textit{Dynamic authentication} generally takes place after static authentication, and revokes system access if the result is negative.
+\textit{Dynamic authentication} generally takes place after static authentication, and \textit{removes access} if the current user is believed to be an imposter, i.e. someone other than the genuine user of the logged in account.
 The user is repeatedly authenticated throughout their session, as an additional layer of security on top of the static authentication.
 Again, both fixed- and free-text can be used for this purpose.
 There are two approaches to free-text dynamic authentication, namely \textit{continuous} and \textit{periodic} authentication, both of which rely on passively monitoring the user's typing behavior, and determining whether the current user is the genuine user of the logged-in account.
-Periodic authentication (PA) systems rely on passively recording a \textit{block} sample of keystrokes of which features are extracted from to generate a probe template when the block is filled.
-These features are then compared to the reference template, similarly to the static authentication systems previously mentioned.
-The authors of PA systems have a tendency of calling their methods "continuous authentication" (CA), but as Bours pointed out in his paper proposing a true CA system, the term "continuous" implies that the authentication process is performed after each individual keystroke \cite{BOURS201236}.
+Periodic authentication (PA) systems rely on passively recording a \textit{block} sample of keystrokes of which features are extracted from to generate a probe when the block is filled.
+These features are then compared to the reference, similarly to the static authentication systems previously mentioned.
+The authors of PA systems have a tendency of calling their methods "continuous authentication" (CA), but as Bours \cite{BOURS201236} pointed out, the term "continuous" implies that the authentication process is performed after each individual keystroke.
 I will therefore refer to all PA systems in the literature as "periodic", regardless if the authors themselves refer to their methods as "continuous".
 
 CA systems such as the one proposed in \cite{BOURS201236} only considers the last keystroke plus its relation to the keystroke before (if any).
-Similarly to PA systems, these features are then compared to the reference template, however, CA systems have much less statistics to work with compared to PA systems.
+Similarly to PA systems, these features are then compared to the reference, however, CA systems have much less statistics to work with compared to PA systems.
 The upside to CA systems is that they react instantly to every user action, such as increasing or lowering the trust in the user's genuineness in Bours' system \cite{BOURS201236}.
 On the contrary, PA systems cannot react to impostors until enough keystrokes have occured to fill the block.
 Until that happens, the impostor has free reign over the genuine user's account in the system.
 
 The features extracted from keystrokes vary between different systems.
 For single key actions, there are two events happening, namely Key Down and Key Up, which means pressing and releasing the key, respectively.
-Timestamps are associated with these events, usually in the form of milliseconds.
+Timestamps are associated with these events, usually at the granularity of milliseconds.
 From these timestamps, the \textit{duration/dwell time} of the keypress can easily be determined.
 When two or more sequential keypresses (n-graphs) are to be considered in relation to each other, a number of features can be extracted.
 As an example, the \textit{digraph} 'AB' may have the timing values as shown in \autoref{tab:timing-example}.
@@ -180,6 +180,8 @@ Should I have a chapter explaining Mondal's CA system?
 \\\\\\\\
 %NOTE: Write about what systems use which n-graphs
 %NOTE: Remove following text.
+%NOTE: http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full HAS A GOOD OVERVIEW OF STATE OF THE ART. 
+%NOTE: http://www.sciencedirect.com/science/article/pii/S1568494617305847 THIS ONE TOO
 Following is a (very) temporary version of what the state of the art overview table may look like.
 This will be gradually extended as I write about more papers.
 This is mostly just to show what types of information is to be included in the final version.
@@ -188,13 +190,14 @@ This is mostly just to show what types of information is to be included in the f
  \hline
  \bf Paper & \bf Block & \bf Users & \bf Uncontr. & \bf Method & \bf Perf. & \bf Notes & n-graphs\\ \hline
  \bf Messerman & 50 - 150 & 55 & Webmail & R\&A &  FAR 2.02\% FRR 1.84\% & adaptive user model & \\ \hline
- \bf Ferreira & 250 & 60 & Yes & R\&A & EER 1.4\% & Updates user profile, also triggers authentication asynch & \\ \hline
+ \bf Ferreira & 250 & 60 & Yes & R\&A & EER 1.4\% & Updates user profile, also triggers authentication asynch & Dw, Fl, 2, 3, 4\\ \hline
  Davoudi(2) & & & & & & & \\ \hline
  %Singh &- & - & - & - & - & STATIC AUTHENT. DONT BOTHER & \\ \hline
  Kaneko & ~200 & 51 & No & Euclidian & 0.66\% EER & Static fixed text, jap. & di \\ \hline
  Ahmed & 500 & 53 & Yes & Neural Networks & FAR 0.0152\% FRR 4.82\% ERR 2.45\% & & mono di\\\hline
  Gunetti & 800 & 40 & Webform & R\&A & FAR 0.005\% FRR 4.833\% & & 2,3,4\\ \hline
  \bf Hu et al. & 36 & 19 & Webform & R\&A, k-NN & FAR 0.045\% FRR 0.005\% & Static text & - \\ \hline
+ \cite{Pinto2014} & 150 & 10 & Uncontr & R\&A & FMR ~2\% FNMR ~2\% & Lacks clarity & Dw, Fl, 2, 3, 4
  
 \end{tabular}
 \end{table}
@@ -290,21 +293,21 @@ This is further discussed in \autoref{sec:gnp-blocksizes}.
 \section{Discussion}
 \subsection{Scalability issues}
 \label{sec:gnp-scalability}
-An issue with Gunetti \& Picardi's method is that during authentication, it compares a probe sample to every user profile in the system.
+An issue with Gunetti \& Picardi's method is that during authentication, it compares a probe to every user profile in the system.
 This is of course necessary in identification situations where the system is trying to determine which user is typing, provided that no identity has been claimed in advance.
 This is indeed very similar to the method they used for identification, however, comparing a sample to every user profile in the system introduces quite severe scalability issues with regards to computational resources as the number of users grows.
 For the experimental setting mentioned, performing authentication for one sample took around 140 seconds on a 2.5Ghz Pentium 4 processor \cite{gnp}, which shows that their authentication algorithm is not practically viable.
 However, this on its own does not imply that the A and R measures are impractical, as the \textit{authentication algorithm} is the factor inflating computational costs.
 
-Considering that an identity is already claimed in authentication scenarios, an ideal system would only have to compare probe samples to the profile of the claimed identity.
+Considering that an identity is already claimed in authentication scenarios, an ideal system would only have to compare probes to the profile of the claimed identity.
 A compromise could be to only compare the probe sample to a subset of user profiles, as pointed out by the authors.
 It should be mentioned that both the original solution and the compromise would require a database with a set of user profiles to be delivered along with the authentication system, as the system so heavily relies on comparing the probe to multiple profiles, as opposed to using a threshold.
-Hu et al. \cite{hu} published an improvement to Gunetti and Picardi's solution, which separates training samples into clusters and uses the k-nearest neighbor classifier to only compare probe samples to users in the same cluster as the claimed identity.
+Hu et al. \cite{hu} published an improvement to Gunetti and Picardi's solution, which separates training samples into clusters and uses the k-nearest neighbor classifier to only compare probes to users in the same cluster as the claimed identity.
 While they achieved significantly higher computation speeds (66.7\%), the time to authenticate a user is still very long.
 
 Another scalability issue in the original solution is pointed out by Gunetti and Picardi themselves, which revolves around false rejections.
 As seen in the two requirement in \autoref{sec:gnp-algorithm}, a genuine user A who is logged into their own account and has a similar typing pattern to another legal user B could be falsely deemed as an imposter if the sample of A is closer to B's profile.
-The authors suggest a remediation to this effect, however, it involves having the authentication system not compare probe samples to other legal users who have similar typing patterns to the claimed identity, something that needs to be processed.
+The authors suggest a remediation to this effect, however, it involves having the authentication system not compare probes to other legal users who have similar typing patterns to the claimed identity, something that needs to be processed.
 Overall, the authentication algorithm has too many issues for it to be viable for my upcoming master thesis.
 
 \subsection{Block size}
@@ -363,11 +366,11 @@ The authors developed an e-mail application which could be linked to volunteer's
 Almost 300,000 keystrokes were collected from 55 participants over the course of a year, with a majority of them (33) producing over 6000 keystrokes.
 15 volunteers produced under 3500 keystrokes.
 
-In their experiments, an authentication attempt was requested after 50 buffered keystrokes, however the classification algorithm relied on having more than 30 shared n-graphs between the probe and each reference template in a user profile. This meant that the effective block size of the PA system was between 50 and 150 keystrokes, which is much less compared to the 800 average block length in Gunetti and Picardi's \cite{gnp} PA system.
+In their experiments, an authentication attempt was requested after 50 buffered keystrokes, however the classification algorithm relied on having more than 30 shared n-graphs between the probe and each reference in a user profile. This meant that the effective block size of the PA system was between 50 and 150 keystrokes, which is much less compared to the 800 average block length in Gunetti and Picardi's \cite{gnp} PA system.
 
 \subsection{Algorithm}
 The author adopted the same classification algorithm as Gunetti and Picardi \cite{gnp}, however, better scalability was needed.
-Since the target application was an e-mail application, which can have thousands or millions of users, comparing new probe templates to the references of every single user of the system would clearly not be viable.
+Since the target application was an e-mail application, which can have thousands or millions of users, comparing new probes to the references of every single user of the system would clearly not be viable.
 To overcome this challenge, the authors modified the classification algorithm to first check if the mean distance between a new probe and the claimed user's reference is below a certain threshold.
 If it is, only then will the next steps of the algorithm commence.
 I would like to point out that the only time this step would reduce the use of computational resources is if the distance is higher than the threshold, i.e. when an alleged imposter is immediately detected.
@@ -380,7 +383,7 @@ The users are selected at random, however the authors mention that a positive si
 
 \subsection{Performance}
 Their experiments showed that the system's performance depended on a number of factors.
-One of these factors is the number of other users to compare a probe template to.
+One of these factors is the number of other users to compare a probe to.
 They found that increasing this number lowered the FMR rate, which in other words means that imposters were detected more frequently.
 As a consequence, the FNMR increased, meaning genuine users would be rejected at a higher rate.
 Increasing the total number of users in the application did not seem to affect the performance, both in terms of error rates and computation time.
@@ -427,7 +430,7 @@ As an example, for a distance threshold of 0.46, the difference in FNMR between 
 
 \autoref{tab:messerman-perf} shows the overall performance of their PA system.
 As the block length varies between 50--150, the real ANIA and ANGA is impossible to calculate.
-However, the authors state that they found an average of 32 shared n-graphs when the block length was 50 and reference sample of length 700, which implies that 50 keystrokes is often enough to perform an authentication.
+However, the authors state that they found an average of 32 shared n-graphs when the block length was 50 and stored samples of length 700, which implies that 50 keystrokes is often enough to perform an authentication.
 Therefore, the real ANIA and ANGA are likely around the lower values in the table.
 
 Finally, the authors report an average computation time of 409--554ms per decision on a 1 GHz Pentium 3 processor. 
@@ -443,7 +446,7 @@ Still, considering that the target system is an e-mail application, this would i
 
 The proposed adaptive user model is a very interesting addition to the PA system.
 Adapting to changes in the user's behavior is something that can have a positive impact on ANGA rates, leading to a better user experience as they are wrongfully locket out less often.
-The user model is only updated if the result of a probe sample is a match.
+The user model is only updated if the result of a probe is a match.
 However, imposters will in some cases be falsely accepted, causing the genuine user's profile to be corrupted with the imposter's typing patterns.
 The authors mention that this can be prevented by limiting how many trials resulting in non-matches are allowed.
 It seems like this could work in certain cases, but if the imposter has a sufficiently similar typing pattern to the genuine user and is accepted by one or more trials, the user profile is already corrupted and will give the imposter higher chances of being accepted in future authentication attempts.
@@ -486,15 +489,15 @@ This leads me to believe that the results are influenced by overfitting, as 0.57
 If the authors indeed overfitted their experiment to their dataset, it is difficult to imagine the true performance of the PA system employed in practice.
 
 Lastly, I would like to mention two unclear issues, with the first being the lack of clarity regarding which n-graphs were considered in the experiments.
-They do mention that they found an average of 32 shared digraphs between probe samples of 50 keystrokes and reference samples of 700 keystrokes, however they do not tie this up to the performance evaluations.
+They do mention that they found an average of 32 shared digraphs between attempt samples of 50 keystrokes and stored samples of 700 keystrokes, however they do not tie this up to the performance evaluations.
 Secondly, they do not explain why they only use the R-measure, as opposed to combining it with an A-measure as Gunetti and Picardi did \cite{gnp}.
 Seeing performance results for a combined R and A distance would be interesting, both for the effects on error rates and computation speed.
 
 \chapter{Ferreira and Santos}
 Another PA system based on Gunetti and Picardi's work was published by Ferreira and Santos in 2012 \cite{superResults}.
 They use a block size of 250 keystrokes and also periodically update the user profile after three successfully authenticated attempts, in other words by merging the attempts into a sample of 750 keystrokes to be integrated into the user profile.
-While they state that one such sample technically is enough to start the authentication stage, the accuracy would obviously be negatively affected by having such a small biometric reference.
-The user profile contains 15 such samples, and during authentication these are \textbf{merged} to one template based on $15*750 = 11250$ keystrokes to be compared to the 250 keystroke probe. 
+While they state that one such sample technically is enough to start the authentication stage, the accuracy would obviously be negatively affected by having such a small user profile.
+The user profile contains 15 such samples, and during authentication these are \textbf{merged} to one template based on $15*750 = 11250$ keystrokes to be compared to the 250 keystroke attempt sample. 
 As new 750 keystroke samples are submitted, the oldest ones in the user profile are replaced by the new samples, not unlike the adaptive user model in Messerman et al.'s PA system \cite{Messerman}.
 An important difference between the two systems is that while Messerman et al. only uses the R measure, Ferreira and Santos' system utilizes both R and A measures for distance calculations.
 %As opposed to the PA system proposed by Messerman et al. \cite{Messerman} which was discussed in \autoref{chap:messerman}, Ferreira and Santos' system uses both R and A measures for their distance calculations.
@@ -513,9 +516,9 @@ They mention that they by default use a similarity threshold of 1.10 for consist
 Unfortunately, they do not describe exactly how this adjustment is performed.
 
 Taking consistent n-graphs into account, the rest of the A measure is calculated as described in \autoref{chap:gnp}. The R measure is also calculated in the same manner as the original method, and the A and R measure are combined into what they call the \textit{global} distance.
-While a probe sample is compared to several other users in \cite{gnp, Messerman}, Ferraira and Santos' PA system bases its decisions solely on a global distance threshold.
+While a probe is compared to several other users in \cite{gnp, Messerman}, Ferraira and Santos' PA system bases its decisions solely on a global distance threshold.
 Interestingly, the global distance threshold is calculated individually for every user.
-This is done computing the global distance between every 750 keystroke sample in the database and the merged reference template, not including their own occurrences.
+This is done computing the global distance between every 750 keystroke sample in the database and the merged references , not including their own occurrences.
 This can alternatively be viewed as every sample being compared to the 14 other samples.
 The average distance of all of these calculations give an expectation of how the genuine user should be performing compared to their own profile.
 The global distance threshold is then set to this average distance minus a static degree of tolerance in order to allow for some variations.
@@ -547,9 +550,10 @@ They also found that there was a clear distinction between genuine and imposter 
 Note that I have intentionally been referring to their matching "score" as a distance measure in order to more easily show their system's relation to the other PA systems using R and A measures. 
 Distances and match scores generally work in the same way, and a distribution of distances would have the red and green dots in \autoref{fig:ferreira-distr} swap places.
 While some of the users generally have lower scores to their own profiles, the imposters score even worse, indicating that having custom distance thresholds for every user benefits the performance of the overall system.
+I would like to mention that it is unclear why the figure involves 65 users instead of 60.
 
 The authors also created a prototype of the PA system for testing it in real time, though at a smaller scale than the simulations.
-Ten participants each produced a fixed reference sample of 200 keystrokes, and testing was conducted by having one genuine attempt and a random person acting as an impostor. This was done in 200 iterations, and resulted in a 0.5\% FMR and a 5.5\% FNMR, which shows that the smaller sample size negatively affected the FNMR, and thus also affected the ANGA which in this case was .
+Ten participants each produced a fixed-text stored sample of 200 keystrokes, and testing was conducted by having one genuine attempt and a random person acting as an impostor. This was done in 200 iterations, and resulted in a 0.5\% FMR and a 5.5\% FNMR, which shows that the smaller sample size negatively affected the FNMR, and thus also affected the ANGA which in this case was 3636.
 
 \section{Discussion}
 \label{sec:ferreira-discussion}
@@ -563,38 +567,49 @@ The CA system already tries to detect imposters as early as possible, and for th
 
 \subsection{Classification}
 A great feature of the PA system is its sole reliance on a user-fitted global distance threshold.
-Not only does this ensure that users who tend to score poorly against their own biometric reference still can use the PA system with satisfying performance, but it also lets the system avoid involving other users in the classification process.
+Not only does this ensure that users who tend to score poorly against their own user profile still can use the PA system with satisfying performance, but it also lets the system avoid involving other users in the classification process.
 As the PA system operates application-wide, one can imagine a scenario where college campus computers would install the PA system.
 Such computers are accessible by thousands of students, and comparing the typing patterns of one user to every other registered student such as Gunetti and Picardi's original system would do \cite{gnp} is clearly not practical.
-While Messerman et al. \cite{Messerman} would not show the same scalability issues due to only including a subset of all students, Ferreira and Santos' system inherently avoids the potential problem of having a genuine user falsely rejected due to their probe sample haphazardly being more similar to another student's behavior than that of their own.
+While Messerman et al. \cite{Messerman} would not show the same scalability issues due to only including a subset of all students, Ferreira and Santos' system inherently avoids the potential problem of having a genuine user falsely rejected due to their probe haphazardly being more similar to another student's behavior than that of their own.
 
-While not involving other users positively affects the scalability of the PA system, their 
+While not involving other users positively affects the scalability of the PA system, the rather large user profiles consisting of over 11000 keystrokes could pose a challenge in real-time applications if they have a very large amount of users.
+This could probably be reduced if necessary, though the performance impact would have to be analyzed extensively beforehand.
+Regardless, as I will not make a real-time application this is not an issue in my specific case.
+Another feature that could be problematic for a real-time implementation is periodically updating the user profile, as it would corrupt the user database if imposters were falsely accepted.
+However, three consecutive attempts would have to be accepted in Ferraira and Santos' system, which lowers this risk.
+If an imposter were accepted three times in a row, the user profile would have to be retroactively rolled back to a valid state.
+Again, this is another feature that can be omitted from the simulations in my master thesis.
 
-%mention asynch for real life implementations
-\subsection{Follow-up study}
+\subsection{Performance}
+Seen in relation to the short block size and high variance datasets, achieving an EER of 1,4\% is remarkable.
+An imposter's window of opportunity is considerably smaller with a block size of 250 keystrokes, compared to Gunetti and Picardi's 800 block size.
+A block size this small is also very suitable for integration with the CA system, as the CA's ANIA rating is around 500 \cite{mondal} at its best settings.
+This means that the PA system could positively affect the ANIA rating, as periodic authentications would occur every 250 keystrokes.
+
+As the static (system specific) degree of tolerance can be changed to influence the relationship between the FMR and FNMR, this allows for tailoring the level of strictness of the PA to better match that of the CA.
+However, I would have to be aware of the possibility of overfitting the degree of tolerance to Mondal's dataset.
+A preventive measure could be to select a random subset of the users and adjusting the degree of tolerance to fit the subset, and using that degree of tolerance for the entire dataset, similarly to the method described in \autoref{chap:gnp}.
+
+Regarding the performance results from the \textit{prototype} experiment, it does give some indication that the system could work in real life, though as the context was highly controlled with static text and relatively few participants, not too much emphasis can be put those results compared to those of the main experiment.
 
 
-
-%Their authentication system uses a short block size and also periodically updates user profiles, similarly to Messerman et al.'s system \cite{Messerman}.
-
-%Positive: Doesn't rely on other users! Only threshold based! - can be changed according to liberal / strict environments (must avoid overfitting though)
-%Positive: Good performance with SMALL probe samples!
 %Positive: Gives ROC curve. Prevents us from only seeing overfitted performance evaulations.
-%Positive: Tested in real life.
-% Asynch, though as I won't be making a real application, I could omit this. The CA system partly covers the intended motivation for this anyway.
-
-% https://link.springer.com/chapter/10.1007%2F978-3-662-44885-4_3#copyrightInformation
 
 
-%Negative: Quite large user profiles, same as GNP: 15*750. Much larger than 3500.
 %Negative: Doesn't mention computation time. Though, it should not be high at all, as probes are only compared to genuine user profile.
+\subsection{Follow-up study}
+A follow up study was performed by Santos and two other authors where they investigated ways to lower the sample size and positively affect the performance of the PA system \cite{Pinto2014}.
+Using different weights for different types of features (dwell, flight, digraph, trigraph, fourgraph) and different weights for A and R measures, they were able to reduce the size of attempt samples to 150 keystrokes, with an FMR and FNMR of around 2\%.
+They found that dwell times, flight times and digraphs were the most effective features to be used for authentication.
+However, the experiments were performed with only 10 participants, and generally lacks clarity, especially so regarding the performance.
+I will therefore not discuss this paper in detail.
+
+
 %Negative: does not mention n-graphs, though seems from figure 
-%Negative: Adaptive user model, intrusions would alter the DB (though I can disable this for my simulations in master)
-%Negative: experiment #2 was static text.. doesnt say very much tbh
+
+% http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full WRITE ABOUT THIS AFTER AHMED
 
 
-
-%Negative NN: comp. heavy. Also, needs to be retrained for every change to profile.
 
 % http://ieeexplore.ieee.org/document/7529146/ this one seems pretty good
 %NOTE: SLIDING? \cite{sliding}. Probably worth writing about
