@@ -153,6 +153,7 @@ They also provide formulas for converting PA systems' FAR into ANIA rates and FR
 This purpose of this literature review is to prepare for my upcoming master thesis on combining CA and PA systems.
 I will be extending the CA system proposed in Soumik Mondal's PhD thesis \cite{mondal} with a PA system in order to determine if the combination of such systems can have positive effects on performance.
 The performance metrics used in said CA system is ANIA and ANGA, and I will therefore use the conversion formulas from \cite{CA-performance} in order to easily compare the performance of PA systems to the CA system's performance.
+%NOTE: Maybe good at some point in chapter 1 to mention that you study the PA systems as they are described, but will most likely implement parts of it only in your master thesis when combining them with the CA system.
 
 %NOTE: write more about purpose of this document.
 %NOTE: Include description of sections.
@@ -182,11 +183,12 @@ Should I have a chapter explaining Mondal's CA system?
 %NOTE: Remove following text.
 %NOTE: http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full HAS A GOOD OVERVIEW OF STATE OF THE ART. 
 %NOTE: http://www.sciencedirect.com/science/article/pii/S1568494617305847 THIS ONE TOO
+%NOTE: https://www.hindawi.com/journals/tswj/2013/408280/ HAS A LOT OF DIFFERENT POINTS TO TALK ABOUT IN STATE OF ART
 Following is a (very) temporary version of what the state of the art overview table may look like.
 This will be gradually extended as I write about more papers.
 This is mostly just to show what types of information is to be included in the final version.
 \begin{table}[h]
-\begin{tabular}{ |c|c|c|c|p{1.5cm}|p{1.9cm}|p{2cm}|c| } 
+\begin{tabular}{ |c|c|c|c|p{1.5cm}|p{1.9cm}|p{2cm}|p{1.5cm}| } 
  \hline
  \bf Paper & \bf Block & \bf Users & \bf Uncontr. & \bf Method & \bf Perf. & \bf Notes & n-graphs\\ \hline
  \bf Messerman & 50 - 150 & 55 & Webmail & R\&A &  FAR 2.02\% FRR 1.84\% & adaptive user model & \\ \hline
@@ -197,7 +199,8 @@ This is mostly just to show what types of information is to be included in the f
  Ahmed & 500 & 53 & Yes & Neural Networks & FAR 0.0152\% FRR 4.82\% ERR 2.45\% & & mono di\\\hline
  Gunetti & 800 & 40 & Webform & R\&A & FAR 0.005\% FRR 4.833\% & & 2,3,4\\ \hline
  \bf Hu et al. & 36 & 19 & Webform & R\&A, k-NN & FAR 0.045\% FRR 0.005\% & Static text & - \\ \hline
- \cite{Pinto2014} & 150 & 10 & Uncontr & R\&A & FMR ~2\% FNMR ~2\% & Lacks clarity & Dw, Fl, 2, 3, 4
+ \cite{Pinto2014} & 150 & 10 & Uncontr & R\&A & FMR ~2\% FNMR ~2\% & Lacks clarity & Dw, Fl, 2, 3, 4 \\ \hline
+ \cite{900words} & ~ 900 words & 2000 & No & KRR, TRBF & EER 1.39\% & Final decision after all words in test set & Tri
  
 \end{tabular}
 \end{table}
@@ -210,20 +213,22 @@ Their system uses two distance measures, namely absolute (A) and relative (R) me
 The R and A measures are summed to produce a final distance.
 Following is a summary of how the R and A measures are calculated.
 
-With two different text samples, each being an array of shared n-graphs ordered by the n-graphs' typing duration (for instance the time between pressing the first key and the second key), the relative distance between them can be calculated as follows.
-The position of each n-graph in one sample is compared to the position of the same n-graph in the other sample, producing a position distance for every n-graph.
+Given an attempt sample and a stored sample, a probe and reference is built by extracting the n-graphs shared by both samples into feature vectors sorted by n-graph durations (for instance the time between pressing the first and second key). 
+The relative distance between the probe and reference can then be calculated as follows.
+The position of each n-graph in the probe is compared to the position of the same n-graph in the reference, producing a position distance for every n-graph.
 The position distances between all the n-graphs are then summed before being normalized, resulting in an R measure.
 Normalization is performed by dividing the summed differences by the maximum disorder possible in an array with length equal to the number of shared n-graphs.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\textwidth]{gunetti/R-measure}
-    \caption{Computation of relative distance of samples with shared digraphs (a) and trigraphs (b). The figure is borrowed from the original paper \cite{gnp}. All rights to the figure belongs to the authors and/or publisher of said paper.}
+    \caption{Computation of relative distance between samples with shared digraphs (a) and trigraphs (b), as presented in \cite{gnp}.}
     \label{fig:R-measure}
 \end{figure}
 
 \autoref{fig:R-measure} demonstrates the comparison between samples.
-E1 and E2 are samples of the words \textit{authentication} and \textit{theoretical}, which share the digraphs shown in (a) and trigraphs shown in (b).
+An attempt sample containing the word \textit{authentication} and a stored sample containing the word \textit{theoretical} have their shared n-graphs extracted into the respective feature vectors E1 and E2.
+Shared digraphs are shown in (a) and shared trigraphs are shown in (b). 
 As pointed out by the authors, the summed position distances in (a) is $2+0+2+3+1=8$.
 As there are five shared digraphs, the maximum disorder of the array is $(5^2-1)/2=12$.
 Therefore, the R distance between E1 and E2 in (a) is $8/12 = 0.666$.
@@ -238,7 +243,7 @@ It is worth mentioning that this could also be the case if the subject has cold 
 While everything is typed slower, the \textit{relative} speed between different n-grams in the same sample is likely to be similar to the relative speed between n-grams in another sample where they were typing at normal speed.
 
 On the other hand, the A measure takes the absolute speed of corresponding n-graphs in two samples into account, as the absolute speed of an imposter's typing pattern is less likely to be similar to the reference than that of the genuine user.
-For this measure to be calculated, identical n-graphs in two different samples are compared and deemed to either be \textit{similar} or not.
+For this measure to be calculated, shared n-graphs in an attempt sample and stored sample are compared and deemed to either be \textit{similar} or not.
 If the durations for these n-graphs are different from eachother, they are regarded as \textit{similar} if the longer duration divided by the shorter duration is between 1 and an arbitrary threshold.
 Their reason for using a threshold instead of relying on standard deviation is that it enables them to use n-graphs which only occur once in the samples.
 The authors chose 1.25 as the threshold for their experiments after testing various thresholds on the data of the five first subjects in their experiment, to avoid overfitting.
@@ -261,7 +266,7 @@ In a case where the threshold was set to 1.35, both the 'ica' and 'the' pairs wo
 
 \section{Experimental setting}
 For their experiment, they had 40 volunteers submitting 15 samples each, consisting of text written in a webform. On average, the sample length was around 800 characters.
-This data was used to build user profiles. 
+14 of these samples were used to build a user profile, while the remaining sample was used as a probe.
 Another 165 volunteers were asked to provide only one sample each, which was to be used as impostor samples for attacking the genuine user profiles.
 The users were asked to only submit one sample per day, though they were free to wait longer between each sample.
 The samples were generally collected from the volunteers' workstations and notebooks, and were all written as free-text.
@@ -275,7 +280,8 @@ For X to be recognized as a genuine sample from user A, both of the following re
 \item md(A,X) is the smallest with respect to any other md(B,X), where B is another legal user of the system.
 \item md(A,X) is smaller than the mean distance between all samples in A's profile m(A), \textbf{or} md(A,X) is closer to m(A) than to any other md(B,X).
 \end{enumerate}
-
+Involving all users in the process is rather counterintuitive for an authentication algorithm.
+This is further discussed in \autoref{sec:gnp-scalability}.
 \subsection{Performance}
 The best performance of their system was achieved using a summation of R and A distances for 2-, 3-, and 4-graphs, reaching an FMR of 0.005\% and an FNMR of 4.833\%, though they call the rates "Imposter Pass Rate (IPR)" and "False Alarm Rate (FAR)".
 By using the formula provided in \cite{CA-performance}, we can convert these rates to ANIA and ANGA rates:
@@ -296,8 +302,8 @@ This is further discussed in \autoref{sec:gnp-blocksizes}.
 An issue with Gunetti \& Picardi's method is that during authentication, it compares a probe to every user profile in the system.
 This is of course necessary in identification situations where the system is trying to determine which user is typing, provided that no identity has been claimed in advance.
 This is indeed very similar to the method they used for identification, however, comparing a sample to every user profile in the system introduces quite severe scalability issues with regards to computational resources as the number of users grows.
-For the experimental setting mentioned, performing authentication for one sample took around 140 seconds on a 2.5Ghz Pentium 4 processor \cite{gnp}, which shows that their authentication algorithm is not practically viable.
-However, this on its own does not imply that the A and R measures are impractical, as the \textit{authentication algorithm} is the factor inflating computational costs.
+For the experimental setting mentioned, performing authentication for one sample took around 140 seconds on a 2.5Ghz Pentium 4 processor \cite{gnp}. 
+While the execution time would be substantially faster with modern hardware, the authentication algorithm is inherently inefficient, and should be replaced if I were to use parts of this PA system for my master project, such as the R and A measures.
 
 Considering that an identity is already claimed in authentication scenarios, an ideal system would only have to compare probes to the profile of the claimed identity.
 A compromise could be to only compare the probe sample to a subset of user profiles, as pointed out by the authors.
@@ -315,22 +321,22 @@ Overall, the authentication algorithm has too many issues for it to be viable fo
 The block size used in their experiment is around 800 keystrokes, as mentioned earlier.
 This is an important issue, because it means that an imposter can perform 800 keystrokes before their authenticity is even checked, which gives them quite a long period of freedom in the system.
 The experimental results for smaller block sizes showed less promising results. 
-\autoref{tab:gnp-blocksizes} shows how the ANGA and ANIA rates were negatively affected:
+\autoref{tab:gnp-blocksizes} shows how the ANIA rates were improved whereas the ANGA rates were negatively affected:
 
 \begin{table}[h]
 \centering
 \begin{tabular}{ccccc}
- \bf Sample length & \bf FAR (\%) & \bf FRR (\%) & \bf ANIA & \bf ANGA \\
+ \bf Sample length & \bf FMR (\%) & \bf FNMR (\%) & \bf ANIA & \bf ANGA \\
  4/4 & 0.005 & 4.833 & 800 & 16553 \\
  3/4 & 0.029 & 9.333 & 600.17 & 6429\\
  2/2 & 0.063 & 15.5 & 400.116 & 4286
 \end{tabular}
-\caption{Experimental results using different block (sample) lengths}
+\caption{Experimental results using different block (sample) lengths. Original table from \cite{gnp} is extended with ANIA and ANGA rates.}
 \label{tab:gnp-blocksizes}
 \end{table}
 The ANIA rate is very much tied to the length of the block, which makes sense as the majority of imposters will be detected the first time the periodic authentication triggers.
 The ANGA rates reveal important details, as it is clear that they drop significantly as the block size is lowered.
-An ANGA rate of 6429 or even 4289 would be annoying for users, as it would result in too many rejections per day.
+An ANGA rate of 4289 or even 6429 would be annoying for users, as it would result in too many rejections per day.
 Therefore, the block size is clearly a major drawback of Gunetti and Picardi's authentication system.
 
 \subsection{Issues regarding enrollment}
@@ -350,10 +356,10 @@ One may wonder if Gunetti and Picardi's system would perform just as well in suc
 In 2011, a paper was published by Messerman et al. \cite{Messerman}, in which they proposed a non-intrusive free-text authentication system based on that of Gunetti and Picardi \cite{gnp}, with an aim to solve the scalability issues discussed in \autoref{sec:gnp-scalability}.
 They also address the fact that a user may experience slight changes in their typing pattern over longer periods of time by introducing an \textit{adaptive user model}.
 
-As a user is initially enrolled, they gradually fill up vectors containing single key actions, which are used for extracting n-graph features to build the biometric reference, or \textit{user profile} as they have named it.
-As the vectors fill up, a minimum number of full vectors is eventually reached for the authentication system to have enough data to begin periodically authenticating the user.
-Instead of stopping the enrollment at this point, more vectors are filled as long as the user is determined to be genuine, up until a maximum amount of vectors.
-After reaching the maximum, the user is continually enrolled by overwriting the oldest vectors, so that the reference always contains the most recent behavior associated with the genuine user, always adapting to gradual changes.
+As a user is initially enrolled, they gradually generate samples which are used for extracting n-graph features to build the biometric reference, or \textit{user profile} as they have named it.
+After a certain minimum amount of sample data is generated, the process of periodically authenticating the user can begin, though the accuracy increases as the reference grows.
+Therefore, instead of stopping the enrollment at this point, more sample data is stored as long as the user is believed to be genuine, up until a maximum amount is collected.
+After reaching the maximum, the user is continually enrolled by overwriting the oldest stored sample data, so that the reference always contains the most recent behavior associated with the genuine user, always adapting to gradual changes.
 
 The distance measure used is a normalized version of Gunetti and Picardi's R measure.
 Recall that the original R measure supports combining distances based on different types of n-graphs such as digraphs and trigraphs based on weighted summation.
@@ -378,8 +384,11 @@ In the general use case where the current user is the genuine one, the entire al
 
 If the mean distance to the reference is below the threshold, the algorithm proceeds in a similar way as the original \cite{gnp}.
 However, instead of comparing the probe to the references of all users, the modified algorithm compares it to a constant number of users.
-The users are selected at random, however the authors mention that a positive side effect to this method is that users with similar typing behavior can be ignored to avoid the problem of falsely rejecting genuine users due to a sample being too similar to another user, as mentioned in \autoref{sec:gnp-scalability}.
-
+This subset of users is selected at random, however the authors mention that a positive side effect to this method is that during authentication, they can avoid including other users with similar typing behavior to the claimed identity's user profile in the subset. 
+That way, if the current user is truly the genuine user, the problem of falsely being rejected due to a sample being too similar to another user can be avoided. 
+This problem was mentioned in \autoref{sec:gnp-scalability}, however the suggested exclusion of similar user profiles seems like a worrisome way of improving performance, as it partly contradicts the purpose of including other users in the authentication algorithm.
+If an imposter writes similarly to the genuine user but even more similarly to some other user in the system, we would want them to be locked out on this basis.
+Excluding users that have similar typing patterns to the claimed identity would inhibit this and likely increase FMR.
 
 \subsection{Performance}
 Their experiments showed that the system's performance depended on a number of factors.
@@ -399,15 +408,14 @@ This makes sense due to the constant number of random users to compare probes to
 The authors report the PA system's performance by using FAR and FRR, however they distinguish \textit{internal} FAR (iFAR) from \textit{external} FAR (eFAR), depending on whether the attackers are other legal users of the application or unknown adversaries.
 As these rates are for the algorithm level, I will hereby use the terms FMR and FNMR as a correction.
 A factor that had a significant impact on these rates was the maximum distance (MD) threshold, as seen in \autoref{fig:messerman-threshold}.
-The authors further separated each error rate into three rates corresponding to how many iterations of the classification algorithm was performed per probe, which they call \textit{trials}. 
-They tested the system for 1, 2 and 3 trials.
-For example, "eFAR\_2" represents the external FMR when each every unknown imposter probe is put through two trials before an overall decision is made.
-Though it is not explicitly stated, this must mean that a different set of random users was chosen per trial, as not doing so would result in no change of outcome.
+The authors further separated each error rate into three rates corresponding to how many samples of 50 keystrokes were run through the classification algorithm before a final decision was made.
+They refer to these runs as \textit{trials}, and they tested the system for 1, 2, and 3 trials.
+For example, "eFAR\_2" represents the external FMR when the final decision is based on two trials. 
 
-As the graph shows, the internal and external FMR was negatively affected by increasing the number of trials, while the effect on FNMR was positive.
+As \autoref{fig:messerman-threshold} shows, the internal and external FMRs were negatively affected by increasing the number of trials, while the effect on FNMR was positive.
 More imposters escape detection as they are given more chances per probe, and genuine users are less often wrongfully rejected.
 Though both rates are affected, the number of trials affects the FNMR on a much larger scale than the FMRs.
-As an example, for a distance threshold of 0.46, the difference in FNMR between two and three trials is approximately 10\%, while the difference in FMR is around 0,5\%.
+As an example, for a distance threshold of 0.46, the difference in FNMR between one and three trials is slightly more than 10\%, while the difference in FMR is around 1\%.
 
 %\begin{figure}[h]
 %    \centering
@@ -468,8 +476,7 @@ The low block size of 50--150 also greatly limits the damage potential for impos
 If this PA system were to be used for securing an entire operating system though, such as the setting in my master thesis, the experiments in both research articles \cite{gnp, Messerman} are unsatisfactory in captured variance of behavior.
 Messerman et al.'s \cite{Messerman} experiments probably captured higher variance, as there was no restriction to language used, and the volunteers were not suggested to write about any certain topics.
 As the keystrokes were recorded in the background, the participants were not merely typing text in order to produce samples; they were simply composing e-mails that they otherwise would have written regardless of participating in the experiment.
-Still, e-mails tend to have a more formal and thought-out wording compared to other message formats such as online chats.
-Also, other behavior such as gaming was not recorded.
+Still, restricting to only e-mails means other behavior such as gaming and coding was not recorded. 
 It is not known how this system would perform in such scenarios with only 3500 keystrokes being covered.
 
 \subsection{Performance evaluation issues}
@@ -480,8 +487,8 @@ In both of these cases, they used 17 external imposters and 23 internal imposter
 This is a total of 40 users, which fits the number of users producing over 3500 keystrokes: $55-15=40$.
 Apart from this, they also showed the settings for investigating the maximum distance threshold's impact on error rates, which is the experiment shown in \autoref{fig:messerman-threshold}.
 Here they used 20 external imposters and 30 internal imposters/legitimate users.
-At this puts the total involved users as 50, they seem to contradict their own minimum number of keystrokes in the enrollment process.
-It is therefore not easy to trust the author's performance evaluations, as they do not explain this contradiction in their article.
+As this puts the total involved users as 50, they seem to contradict their own minimum number of keystrokes in the enrollment process.
+The true performance results are therefore not completely clear, as they do not explain this contradiction in their article.
 
 Another issue regarding their performance evaluation is the fact that the results in \autoref{tab:messerman-perf} are achieved with a maximum distance threshold of 0.57.
 Again, the authors do not explain the reasoning for this specific value.
@@ -605,7 +612,6 @@ However, the experiments were performed with only 10 participants, and generally
 I will therefore not discuss this paper in detail.
 
 
-%Negative: does not mention n-graphs, though seems from figure 
 
 % http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full WRITE ABOUT THIS AFTER AHMED
 
@@ -616,7 +622,7 @@ I will therefore not discuss this paper in detail.
 %NOTE: VILLANI MAY BE WORTH INCLUDING BECAUSE OF EUCLIDIAN DISTANCE
 % https://www.hindawi.com/journals/tswj/2013/408280/talks about machine learning
 \chapter{Concluding discussion}
-
+% NOTE: Mention possibility of sliding window?
 
 
 %NOTE: FIX BIB STYLE
