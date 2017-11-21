@@ -612,14 +612,35 @@ However, the experiments were performed with only 10 participants, and generally
 I will therefore not discuss this paper in detail.
 
 
+\chapter{Ahmed and Traore}
+The PA system previously discussed in dedicated chapters have all applied a statistical approach for their authentication schemes.
+Machine learning is another approach that has gained popularity in recent years, and Ahmed and Traore \cite{Ahmed} proposed such a PA system in 2013.
+One of their goals was to decrease the needed amount of keystroke data from enrollment.
+PA systems which rely on an uncontrolled free-text enrollment phase will, depending on the amount of data collected, have varying amounts of different n-graphs recorded and stored.
+Therefore, a user may generate an attempt sample containing one or more n-graphs not present in the reference.
+For this reason, the authors proposed a method for predicting what timing features a missing n-graph would have, based on relations between the n-graphs present in the reference.
+
+
+
+\section{Discussion}
+
+%Though 500 block length is rather lengthy, it might still positively affect the results of CA, since its ANIA is ~500 and above. That's just an average anyway. Std dvt?
+
+
+%Can possibly use the digraph approx. method along with another system?
+
+%Positive: Completely unrestricted enrolllment, suitable for master project.
+
+%Negative: They claim "far lower processing time" than 
+%Negative: Must be retrained
 
 % http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full WRITE ABOUT THIS AFTER AHMED
 
 
 
-% http://ieeexplore.ieee.org/document/7529146/ this one seems pretty good
-%NOTE: SLIDING? \cite{sliding}. Probably worth writing about
-%NOTE: VILLANI MAY BE WORTH INCLUDING BECAUSE OF EUCLIDIAN DISTANCE
+% http://ieeexplore.ieee.org/document/7529146/ this one seems pretty good (state?)
+%NOTE: SLIDING? \cite{sliding}. Probably worth writing about (incl. in state)
+%NOTE: VILLANI MAY BE WORTH INCLUDING BECAUSE OF EUCLIDIAN DISTANCE (incl. state)
 % https://www.hindawi.com/journals/tswj/2013/408280/talks about machine learning
 \chapter{Concluding discussion}
 % NOTE: Mention possibility of sliding window?
