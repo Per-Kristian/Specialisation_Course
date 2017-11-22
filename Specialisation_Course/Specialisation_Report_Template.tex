@@ -614,15 +614,85 @@ I will therefore not discuss this paper in detail.
 
 \chapter{Ahmed and Traore}
 The PA system previously discussed in dedicated chapters have all applied a statistical approach for their authentication schemes.
-Machine learning is another approach that has gained popularity in recent years, and Ahmed and Traore \cite{Ahmed} proposed such a PA system in 2013.
+Machine learning is another approach that has gained popularity in recent years, and Ahmed and Traore \cite{Ahmed}'s proposed PA system is based on this approach.
 One of their goals was to decrease the needed amount of keystroke data from enrollment.
 PA systems which rely on an uncontrolled free-text enrollment phase will, depending on the amount of data collected, have varying amounts of different n-graphs recorded and stored.
 Therefore, a user may generate an attempt sample containing one or more n-graphs not present in the reference.
-For this reason, the authors proposed a method for predicting what timing features a missing n-graph would have, based on relations between the n-graphs present in the reference.
+For this reason, the authors proposed a method called \textit{sorted time mapping} for predicting what timing features a missing n-graph would have, based on relations between the n-graphs present in the reference.
+
+Their system relies on covering the most frequently used \textit{monographs}.
+The definition of "frequent" in this context is flexible, as it means the set of keys with a higher chance of occurrence than a certain probability threshold.
+In this case, "chance of occurrence" means the chance of a key being \textit{the next key to be pressed}, not the chance of it occurring once in an entire enrollment sample.
+The size of the enrollment sample must then be decided so that all monographs above the probability threshold is covered.
+For instance, if the probability threshold is set to 0.001, all keys with higher chance of occurrence than 0.1\% must be covered in the enrollment sample, and the size of the enrollment sample must be set to a value that satisfies this criteria.
+More on how this size is determined is described in \autoref{sec:ahmed-experimental}.
+
+\section{Neural networks}
+Two feed forward neural networks of type multilayer perceptron (MLP) are trained during using the enrollment sample and used for behavior modeling.
+One network processes monographs, while the other processes digraphs.
+For training the digraph network, a \textit{digraph mapping table} must be generated based on the data from the enrollment sample.
+This table contains an entry for the keycode of every key in the enrollment sample.
+These entries are sorted by the average flight time \underline{to} the monographs, based on all recorded digraphs with that monograph as the second key.
+Every key then has an \textit{digraph key order (DKO)}, which represents the average flight time to that key relative to all other keys. 
+The actual average flight times are excluded from the table; only the DKO of each key is included.
+One might notice how this resembles the calculation of Gunetti and Picardi's \cite{gnp} R-measure.
+Similarly, a \textit{monograph mapping table} is needed for training the monograph network. 
+This table is ordered by dwell times instead of flight times, giving each key from enrollment a \textit{monograph key order}.
+
+The digraph network is trained with all digraphs from the enrollment sample encoded as DKOs.
+As seen in \autoref{fig:ahmed-networks} (b), it is trained with two inputs, namely "from" and "to", which are fed the DKO of the two keys involved in a digraph. 
+The training output is the actual flight time of the digraph.
+Training the monograph network is done similarly, though with MKOs as input and actual dwell times as output.
+Both networks are trained using the Levenberg–Marquardt algorithm.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{ahmed/networks}
+    \caption{The structure of the monograph network (a) and digraph network (b), as presented in \cite{Ahmed}.}
+    \label{fig:ahmed-networks}
+\end{figure}
+
+When the networks are trained, their weights are stored along with the monograph and digraph mapping tables as a \textit{reference signature}.
+The reference signature is loaded during the authentication phase, as all users of the PA system utilize the same two neural networks, only with their own mapping tables and network weights.
+\autoref{fig:ahmed-authentication} shows how data is processed during periodic authentication.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{ahmed/authentication}
+    \caption{Ahmed and Traore's periodic authentication mechanism \cite{Ahmed}.}
+    \label{fig:ahmed-authentication}
+\end{figure}
+When an attempt sample is collected, monograph dwell times and digraph flight times are extracted from the raw data, essentially acting as probes.
+Recorded monographs are mapped into MKOs using the genuine user's monograph mapping table.
+The MKOs are then fed as input to the monograph network which is loaded with the genuine user's weights.
+The output dwell times represent the expected values which are compared to the dwell times from the attempt samples, with each comparison resulting in a deviation.
+When all dwell time deviations are fed to the decision module, it calculates the average absolute deviation (AAD), using the following equation \cite{Ahmed}:
+\begin{equation}
+AAD\textsubscript{mono}={{\sum\limits_{i=1}^{N_{\rm mono}}{{{\left\vert{d_{i}-D_{i}}\right\vert}\over{D_{i}}}\times100}}\over{N_{\rm mono}}}
+\end{equation}
+with N\textsubscript{mono} being the total number of monographs from the probe, d\textsubscript{i} being the \textit{i}th probe monograph's dwell time and D\textsubscript{i} being the \textsubscript{i}th monographs's expected dwell time.
+The expected dwell time is the output of the monograph network.
+
+Digraphs are processed similarly, as seen in \autoref{fig:ahmed-authentication}, though the digraph network outputs an estimated flight time if the current digraph being processed was not included in the training.
+It calculates this estimated flight time by viewing the digraphs relation to the other digraphs based on the DKOs from the digraph mapping table.
+The actual flight time of the probe digraph is compared to the output of the digraph network, regardless if the digraph was missing from enrollment or not.
 
 
 
+with the digraphs present in the enrollment sample, it can be used to estimate the flight times of missing digraphs involving the existing keys in the sample.
+The DKOs of all missing digraphs is fed as input, and the estimated (expected) flight times will be produced by the network.
+This can then be used to 
+
+%The training of the monograph network is performed by sorting the monographs present in the enrollment sample by their average dwell time.
+%The result of this is a \textit{monograph mapping table} containing all monographs' key codes and their relative order.
+%The actual average dwell time of each monograph is not included in the mapping table.
+
+
+
+
+\section{Experimental setting}
+\label{sec:ahmed-experimental}
 \section{Discussion}
+%Resembles R measure
 
 %Though 500 block length is rather lengthy, it might still positively affect the results of CA, since its ANIA is ~500 and above. That's just an average anyway. Std dvt?
 
@@ -630,9 +700,13 @@ For this reason, the authors proposed a method for predicting what timing featur
 %Can possibly use the digraph approx. method along with another system?
 
 %Positive: Completely unrestricted enrolllment, suitable for master project.
+%Positive: Only relies on genuine user data, doesn't need to be trained with imposter data.
 
 %Negative: They claim "far lower processing time" than 
 %Negative: Must be retrained
+%Negative: 70% in fig 10 has wrong FAR? Really would like to see that performance. Also, their stated performance of 0.0152% FAR and 4.85 % FNMR doesn't exist in the figure. Probably several errors here.
+%Negative: Super inconsistent sample size?? based on their reference to GNP's sample size, I can ASSUME "digraphs" means keystrokes.
+%Negative: While it uses a small selected enrollment sample, way more data is in reality needed to decide how small of a sample can actually be used. Of course, they have a large sample size, so that their findings can probably be used in other settings, but if another probability threshold is to be used, determining the needed sample size is difficult.
 
 % http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full WRITE ABOUT THIS AFTER AHMED
 
