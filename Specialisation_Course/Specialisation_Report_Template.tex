@@ -150,7 +150,7 @@ Bours and Mondal proposed in 2015 two new metric for evaluating the performance 
 These rates look at how many actions imposters and genuine users on average can perform before being rejected by the authentication system, as it often is more useful to know how often users will be locked out than the probability of that happening per sample.
 They also provide formulas for converting PA systems' FAR into ANIA rates and FRR into ANGA rates.
 
-This purpose of this literature review is to prepare for my upcoming master thesis on combining CA and PA systems.
+The purpose of this literature review is to prepare for my upcoming master thesis on combining CA and PA systems.
 I will be extending the CA system proposed in Soumik Mondal's PhD thesis \cite{mondal} with a PA system in order to determine if the combination of such systems can have positive effects on performance.
 The performance metrics used in said CA system is ANIA and ANGA, and I will therefore use the conversion formulas from \cite{CA-performance} in order to easily compare the performance of PA systems to the CA system's performance.
 %NOTE: Maybe good at some point in chapter 1 to mention that you study the PA systems as they are described, but will most likely implement parts of it only in your master thesis when combining them with the CA system.
@@ -635,7 +635,6 @@ This table contains an entry for the keycode of every key in the enrollment samp
 These entries are sorted by the average flight time \underline{to} the monographs, based on all recorded digraphs with that monograph as the second key.
 Every key then has an \textit{digraph key order (DKO)}, which represents the average flight time to that key relative to all other keys. 
 The actual average flight times are excluded from the table; only the DKO of each key is included.
-One might notice how this resembles the calculation of Gunetti and Picardi's \cite{gnp} R-measure.
 Similarly, a \textit{monograph mapping table} is needed for training the monograph network. 
 This table is ordered by dwell times instead of flight times, giving each key from enrollment a \textit{monograph key order}.
 
@@ -676,21 +675,35 @@ Digraphs are processed similarly, as seen in \autoref{fig:ahmed-authentication},
 It calculates this estimated flight time by viewing the digraphs relation to the other digraphs based on the DKOs from the digraph mapping table.
 The actual flight time of the probe digraph is compared to the output of the digraph network, regardless if the digraph was missing from enrollment or not.
 
-
-
-with the digraphs present in the enrollment sample, it can be used to estimate the flight times of missing digraphs involving the existing keys in the sample.
-The DKOs of all missing digraphs is fed as input, and the estimated (expected) flight times will be produced by the network.
-This can then be used to 
-
-%The training of the monograph network is performed by sorting the monographs present in the enrollment sample by their average dwell time.
-%The result of this is a \textit{monograph mapping table} containing all monographs' key codes and their relative order.
-%The actual average dwell time of each monograph is not included in the mapping table.
-
-
-
+When the AADs for mono- and digraphs are calculated, the decision module combines them linearly using weights.
+The combined deviation is calculated using the following equation:
+\begin{equation}
+D = B * AAD\textsubscript{mono} + (1-B)AAD\textsubscript{di}
+\end{equation}
+where D is the combined deviation and B is a balancing factor (originally called dependability factor).
+The balancing factor is a value between 0 and 1, and lower values place more weight on the digraph AAD.
+The final output is true or false, depending on the combined deviation and a selected decision threshold.
+A combined deviation below the the threshold leads to the output being true, meaning the probe behavior is recognized as the genuine user.
 
 \section{Experimental setting}
 \label{sec:ahmed-experimental}
+Their main experiment consisted of a completely uncontrolled collection phase, with 53 participants installing a keystroke logging tool on their personal computers.
+They had a high variation in typing skills, age and gender, and around 18 000 keystrokes were collected from every user on average over the course of five months.
+
+As mentioned earlier, the size to be used for enrollment samples must cover the most frequently used keys.
+During the experiment, the authors investigated how many keystrokes were needed for a probability threshold of 0.001, which corresponded to the 60 most frequently used keys \cite{Ahmed}.
+They found that 1350 keystrokes were needed to cover 100\% of the most frequently used keys for three arbitrary participants, and decided that 1500 keystrokes would be used as an enrollment sample size for the rest of the experiment.
+
+The first 1500 keystrokes from the exeriment's collection phase were used to build the user profile, consisting of mono- and digraph mapping tables, along with networks with user specific weights.
+The rest of the keystrokes collected were divided into attempt samples of length 500, each being used as a genuine test sample and for attacking all other users.
+They call this a leave-one-out cross-validation test (LOOCV), though it seems to me that this is not the case as they specifically state that the user profiles were built using the \underline{first 1500} keystrokes \cite{Ahmed}.
+This means that all test sets are tested against the same training set, which can not be called cross-validation.
+Regardless, the test was repeated for all 53 participants.
+
+\subsection{Performance}
+\label{sec:ahmed-performance}
+
+
 \section{Discussion}
 %Resembles R measure
 
@@ -700,6 +713,7 @@ This can then be used to
 %Can possibly use the digraph approx. method along with another system?
 
 %Positive: Completely unrestricted enrolllment, suitable for master project.
+%Positive: high variation in collection. Very old computers though (probably old dataset), but that doesnt necessarily mean anything.
 %Positive: Only relies on genuine user data, doesn't need to be trained with imposter data.
 
 %Negative: They claim "far lower processing time" than 
