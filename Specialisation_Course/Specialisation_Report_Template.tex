@@ -34,6 +34,7 @@
 \usepackage{mdwlist}
 \usepackage{url}
 \usepackage{here}
+\usepackage{subcaption}
 
 \def\UrlFont{\tt}
 
@@ -73,7 +74,6 @@ NTNU in Gj\o{}ovik
 
 
 \tableofcontents
-
 \chapter{Introduction}
 Biometrics is increasingly utilized for user authentication, with fingerprint readers being built into personal devices such as smart phones and laptops.
 Biometric systems based on modalities such as fingerprint, hand print, iris, retina and facial recognition are to varying degrees now known to the general public.
@@ -101,11 +101,14 @@ The authors of PA systems have a tendency of calling their methods "continuous a
 I will therefore refer to all PA systems in the literature as "periodic", regardless if the authors themselves refer to their methods as "continuous".
 
 CA systems such as the one proposed in \cite{BOURS201236} only considers the last keystroke plus its relation to the keystroke before (if any).
-Similarly to PA systems, these features are then compared to the reference, however, CA systems have much less statistics to work with compared to PA systems.
+Similarly to PA systems, these features are then compared to the reference. 
+However, CA systems have much less statistics to work with compared to PA systems.
 The upside to CA systems is that they react instantly to every user action, such as increasing or lowering the trust in the user's genuineness in Bours' system \cite{BOURS201236}.
-On the contrary, PA systems cannot react to impostors until enough keystrokes have occured to fill the block.
+On the contrary, PA systems cannot react to impostors until enough keystrokes have occurred to fill the block.
 Until that happens, the impostor has free reign over the genuine user's account in the system.
 
+
+\chapter{Background}
 The features extracted from keystrokes vary between different systems.
 For single key actions, there are two events happening, namely Key Down and Key Up, which means pressing and releasing the key, respectively.
 Timestamps are associated with these events, usually at the granularity of milliseconds.
@@ -115,12 +118,13 @@ As an example, the \textit{digraph} 'AB' may have the timing values as shown in 
 From those values, one could extract the durations of the single keys, but also the following features: 
 
 \begin{itemize}
-\item A\textsubscript{down}--B\textsubscript{down} (latency)
-\item (A\textsubscript{down}--B\textsubscript{up}) (duration)
-\item (A\textsubscript{up}--B\textsubscript{down}) (flight time)
-\item (A\textsubscript{up}--B\textsubscript{up}) (latency)
+\item B\textsubscript{down}--A\textsubscript{down}(latency)
+\item B\textsubscript{up}--A\textsubscript{down} (duration)
+\item B\textsubscript{down}--A\textsubscript{up} (flight time)
+\item B\textsubscript{up}--A\textsubscript{up} (latency)
 \end{itemize}
-The respective latency values would then be 45, 60, 25 and 40 milliseconds, calculated by subtracting the timestamp of the first key from the timestamp of the second key.
+%NOTE: Should I use minus or arrow between these?
+The respective values would then be 45, 60, 25 and 40 milliseconds, calculated by subtracting the timestamp of the first key (A) from the timestamp of the second key (B).
 The authentication system could then use these features to calculate the similarity to the reference template for instance by using one or more distance measures, or by using machine learning algorithms.
 
 \begin{table}[h]
@@ -179,6 +183,7 @@ This chapter will contain a summary of the state of the art, with a similar form
 The following chapters are discussions of individual PA systems.
 Should I have a chapter explaining Mondal's CA system?
 \\\\\\\\
+%NOTE: Add KIM and CPE to list
 %NOTE: Write about what systems use which n-graphs
 %NOTE: Remove following text.
 %NOTE: http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full HAS A GOOD OVERVIEW OF STATE OF THE ART. 
@@ -501,6 +506,7 @@ Secondly, they do not explain why they only use the R-measure, as opposed to com
 Seeing performance results for a combined R and A distance would be interesting, both for the effects on error rates and computation speed.
 
 \chapter{Ferreira and Santos}
+\label{chap:ferreira}
 Another PA system based on Gunetti and Picardi's work was published by Ferreira and Santos in 2012 \cite{superResults}.
 They use a block size of 250 keystrokes and also periodically update the user profile after three successfully authenticated attempts, in other words by merging the attempts into a sample of 750 keystrokes to be integrated into the user profile.
 While they state that one such sample technically is enough to start the authentication stage, the accuracy would obviously be negatively affected by having such a small user profile.
@@ -522,20 +528,23 @@ This enables them to place more strict expectations where the genuine user rarel
 They mention that they by default use a similarity threshold of 1.10 for consistent n-graphs and 1.25 for others, and that these are adjusted based on every individual user's timing consistency \cite{superOld}.
 Unfortunately, they do not describe exactly how this adjustment is performed.
 
-Taking consistent n-graphs into account, the rest of the A measure is calculated as described in \autoref{chap:gnp}. The R measure is also calculated in the same manner as the original method, and the A and R measure are combined into what they call the \textit{global} distance.
+Taking consistent n-graphs into account, the rest of the A measure is calculated as described in \autoref{chap:gnp}. The R measure is also calculated in the same manner as the original method, and the A and R measure are combined into what they call the \textit{global score}.
+Note that I will refer to their matching score as a \textit{distance} in order to more easily show their system's relation to the other PA systems using R and A measures. 
+Distances and match scores generally work in the same way, except high scores indicate more similarity, whereas high distances indicate \textit{dissimilarity}.
 While a probe is compared to several other users in \cite{gnp, Messerman}, Ferraira and Santos' PA system bases its decisions solely on a global distance threshold.
 Interestingly, the global distance threshold is calculated individually for every user.
-This is done computing the global distance between every 750 keystroke sample in the database and the merged references , not including their own occurrences.
-This can alternatively be viewed as every sample being compared to the 14 other samples.
+This is done computing the global distance between every 750 keystroke sample in the database and the merged references, not including their own occurrences, which essentially is a leave-one-out cross validation.
 The average distance of all of these calculations give an expectation of how the genuine user should be performing compared to their own profile.
 The global distance threshold is then set to this average distance minus a static degree of tolerance in order to allow for some variations.
-This threshold largely affects the error rates, and can be changed to balance FMR and FNMR according to how strict of a system is wanted.
+This threshold largely affects the error rates, and can be changed to balance FMR and FNMR according to how strict the system should be.
 This is further shown in \autoref{sec:ferreira-experiment}.
 
 Another interesting feature that the authors proposed is to asynchronously authenticate the user when certain events happen.
 One example could be after a longer period of silence where the genuine user may have left the workstation, an authentication could be triggered after 75 keystrokes.
-Then, a sample consisting of the last $175 + 75 = 250$ keystrokes would be tested, in order to potentially catch any imposter who would have taken control of the computer.
+Then, a sample consisting of the last $175 + 75 = 250$ keystrokes would be tested, in order to potentially catch an imposter who would have taken control of the computer.
 Attempting to save or overwrite important files could also trigger this functionality.
+The example of 75 keystrokes may be too small to weigh down the 175 genuine keystrokes in a real scenario, though an experiment could be performed in order to optimize the ratio.
+Also, this kind of asynchronous authentication could in practice be implemented in any PA system, but it is rarely mentioned in literature as a possible option.
 
 \section{Experimental setting}
 \label{sec:ferreira-experiment}
@@ -552,10 +561,9 @@ These extra samples were used both to simulate genuine access attempts and as im
 \end{figure}
 
 The results of the simulations showed an equal error rate of 1.4\%, and they point out a specific setting for the degree of tolerance mentioned earlier which gives a 0.5\% FMR and 2.7\% FNMR.
-This translates to an ANIA of $250 / (1-0.005) \approx{251}$, and ANGA of $250 / 0.055 \approx{4545}$, which will be discussed in \autoref{sec:ferreira-discussion}.
-They also found that there was a clear distinction between genuine and imposter attempts, as seen in \autoref{fig:ferreira-distr}.
-Note that I have intentionally been referring to their matching "score" as a distance measure in order to more easily show their system's relation to the other PA systems using R and A measures. 
-Distances and match scores generally work in the same way, and a distribution of distances would have the red and green dots in \autoref{fig:ferreira-distr} swap places.
+This translates to an ANIA of $250 / (1-0.005) \approx{251}$, and ANGA of $250 / 0.027  \approx{9259}$, which will be discussed in \autoref{sec:ferreira-discussion}.
+They also found that there was a clear distinction between genuine and imposter attempts as seen in \autoref{fig:ferreira-distr}, though if the authors used a distance metric as opposed to a score, the red and green dots in the figure would swap places. 
+
 While some of the users generally have lower scores to their own profiles, the imposters score even worse, indicating that having custom distance thresholds for every user benefits the performance of the overall system.
 I would like to mention that it is unclear why the figure involves 65 users instead of 60.
 
@@ -569,8 +577,8 @@ The experiment's uncontrolled data collection phase also matches Mondal's experi
 As I will be using Mondal's database for my own project, I am likely to receive similar results when applying Ferreira and Santos' methods to it, as the data should have similar amounts of variation in typing behavior per user.
 
 While their method for asynchronous authentication is a great measure for possibly detecting imposters even earlier than the block size originally allows, and even on special triggers, this is mostly relevant for actual real-time implementations of the software.
-My master thesis will revolve around simulations and analysis, and I could therefore omit this functionality if I were to integrate this PA system into the CA system.
-The CA system already tries to detect imposters as early as possible, and for that reason partly covers the intended motivation for the proposed asynchronous authentication.
+% Omitted by suggestion: My master thesis will revolve around simulations and analysis, and I could therefore omit this functionality if I were to integrate this PA system into the CA system.
+Mondal's CA system already tries to detect imposters as early as possible, and for that reason partly eliminates the need for the proposed asynchronous authentication.
 
 \subsection{Classification}
 A great feature of the PA system is its sole reliance on a user-fitted global distance threshold.
@@ -581,7 +589,7 @@ While Messerman et al. \cite{Messerman} would not show the same scalability issu
 
 While not involving other users positively affects the scalability of the PA system, the rather large user profiles consisting of over 11000 keystrokes could pose a challenge in real-time applications if they have a very large amount of users.
 This could probably be reduced if necessary, though the performance impact would have to be analyzed extensively beforehand.
-Regardless, as I will not make a real-time application this is not an issue in my specific case.
+%Omitted by suggestion: Regardless, as I will not make a real-time application this is not an issue in my specific case.
 Another feature that could be problematic for a real-time implementation is periodically updating the user profile, as it would corrupt the user database if imposters were falsely accepted.
 However, three consecutive attempts would have to be accepted in Ferraira and Santos' system, which lowers this risk.
 If an imposter were accepted three times in a row, the user profile would have to be retroactively rolled back to a valid state.
@@ -642,7 +650,7 @@ The digraph network is trained with all digraphs from the enrollment sample enco
 As seen in \autoref{fig:ahmed-networks} (b), it is trained with two inputs, namely "from" and "to", which are fed the DKO of the two keys involved in a digraph. 
 The training output is the actual flight time of the digraph.
 Training the monograph network is done similarly, though with MKOs as input and actual dwell times as output.
-Both networks are trained using the Levenberg–Marquardt algorithm.
+Both networks are trained using the Levenberg–Marquardt algorithm and the monograph network's hidden layer consists of 16 nodes, while the digraph network's hidden layer has 40.
 
 \begin{figure}[h]
     \centering
@@ -680,7 +688,7 @@ The combined deviation is calculated using the following equation:
 \begin{equation}
 D = B * AAD\textsubscript{mono} + (1-B)AAD\textsubscript{di}
 \end{equation}
-where D is the combined deviation and B is a balancing factor (originally called dependability factor).
+where D is the combined deviation and B is a balancing factor (the authors vary between calling this a balancing, dependability and tuning factor).
 The balancing factor is a value between 0 and 1, and lower values place more weight on the digraph AAD.
 The final output is true or false, depending on the combined deviation and a selected decision threshold.
 A combined deviation below the the threshold leads to the output being true, meaning the probe behavior is recognized as the genuine user.
@@ -694,7 +702,7 @@ As mentioned earlier, the size to be used for enrollment samples must cover the 
 During the experiment, the authors investigated how many keystrokes were needed for a probability threshold of 0.001, which corresponded to the 60 most frequently used keys \cite{Ahmed}.
 They found that 1350 keystrokes were needed to cover 100\% of the most frequently used keys for three arbitrary participants, and decided that 1500 keystrokes would be used as an enrollment sample size for the rest of the experiment.
 
-The first 1500 keystrokes from the exeriment's collection phase were used to build the user profile, consisting of mono- and digraph mapping tables, along with networks with user specific weights.
+The first 1500 keystrokes from the experiment's collection phase were used to build the user profile, consisting of mono- and digraph mapping tables, along with networks with user specific weights.
 The rest of the keystrokes collected were divided into attempt samples of length 500, each being used as a genuine test sample and for attacking all other users.
 They call this a leave-one-out cross-validation test (LOOCV), though it seems to me that this is not the case as they specifically state that the user profiles were built using the \underline{first 1500} keystrokes \cite{Ahmed}.
 This means that all test sets are tested against the same training set, which can not be called cross-validation.
@@ -702,25 +710,88 @@ Regardless, the test was repeated for all 53 participants.
 
 \subsection{Performance}
 \label{sec:ahmed-performance}
+When using attempt samples of length 500 and balancing the mono- and digraphs equally, they achieved an EER of 2.13\%.
+Varying the decision threshold allowed for tuning the relationship between FMR and FNMR, and the authors point at a specific threshold level of 77\% which gave an FMR of 0.0152\% and FNMR of 4.82\%.
+This corresponds to an ANIA of 500, and ANGA of $500 / 0.0482 = 10373$.
+The experiment's receiver operating curve (ROC) can be seen in \autoref{fig:ahmed-withdi}, where different threshold levels are marked with an X.
+The authors also tested the performance without digraph predictions, where every digraph missing from the user profile was ignored.
+This resulted in a worse performance, and judging from \autoref{fig:ahmed-withoutdi}, the equal error rate seems to be around 12\%.
 
+\begin{figure}[!tbp]
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{ahmed/roc}
+    \caption{With digraph prediction.}
+    \label{fig:ahmed-withdi}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{ahmed/without-di}
+    \caption{Without digraph prediction.}
+    \label{fig:ahmed-withoutdi}
+  \end{subfigure}
+  \caption{Receiver operating characteristic curves of the performance in terms of FMR and FNMR with and without digraph prediction \cite{Ahmed}.}
+\end{figure}
 
 \section{Discussion}
-%Resembles R measure
+\label{sec:ahmed-discussion}
 
-%Though 500 block length is rather lengthy, it might still positively affect the results of CA, since its ANIA is ~500 and above. That's just an average anyway. Std dvt?
+\subsection{Sample sizes}
+\label{sec:ahmed-discussion-sample}
+At a first glance, a block length of 500 keystrokes seems rather lengthy, especially compared to the block lengths of Messerman et al. \cite{Messerman} and Ferreira \& Santos \cite{superResults}.
+Even so, it could still positively impact of Mondal's \cite{mondal} CA system, as that system has an ANIA of around 500 keystrokes and above, depending on the classification method used.
+As that is an \textit{average} number of imposter actions, it implies that some imposters are not detected until more actions are performed.
+Some may not be detected at all, and therefore, incorporating a PA system with a block length of 500 could in many cases help lowering the CA system's ANIA rate.
 
+The enrollment sample size of 1500 keystrokes is impressive, and their digraph prediction functionality is what enables the PA system to rely on such small amounts of information being present in the user profile.
+The method for deciding the size of enrollment samples does raise a concern though, as they based the decision on how many keystrokes were needed to cover 100\% of the most frequently used keys, in their case specifically for the probability threshold of 0.001.
+It seems that if another probability threshold is to be used, anyone implementing this PA system must investigate the sample size needed to fit their own probability threshold. 
+If true, this means that an experimental collection phase has to be performed prior to implementing the PA system and using it.
+
+While only needing 1500 keystrokes to enroll a user allows for quickly initiating the authentication stage, the varying contexts covered in enrollment inherently suffers, which is another concern.
+Considering that a PA system targeting application-wide monitoring needs to take into account behaviors such as playing various games, writing text and other contexts, such a short enrollment phase may only cover a subset of the needed information.
+It would be useful to see the error rates for gaming behavior in the authors' experiments.
+Unfortunately, this information is not provided.
+
+It is also worth mentioning that the authors were inconsistent in their description on sample sizes, varying between using keystrokes and digraphs as a measure of sample length.
+1500 keystrokes and 1500 digraphs does not represent the same length, as 1500 keystrokes will at best contain 1499 digraphs.
+Also, two keystrokes with a very long flight time between them cannot truly be considered a digraph as this generally means the user paused their typing. 
+This means that for every such pause, more keystrokes are needed to cover 1500 digraphs, further distancing the "keystrokes" and "digraphs" measures of length.
+In my description of their system, I have used "keystrokes" as a measure of length, based on the assumption that this is what they mean.
+
+\subsection{Experimental settings}
+Similarly to the PA system discussed in \autoref{chap:ferreira}, the collection phase matches that of Mondal's \cite{mondal} experiments, as it was uncontrolled and performed on the participants' own computers.
+As they also had a high variance in participant characteristics such as age and gender, their dataset should include a rather large spectrum of contexts.
+This means that the test probes generated should cover those different contexts even if only 1500 keystrokes were used for enrollment, which partly covers the issue mentioned in \autoref{sec:ahmed-discussion-sample}.
+
+The fact that they used the \textit{first} 1500 keystrokes for building user profiles in an uncontrolled collection phase seems slightly counterintuitive.
+Immediately after a user installs the keystroke monitoring software is probably a period of time where they are more conscious about the fact that their typing patterns are being collected. 
+This could lead to some tension which could lead to slight variations representing uncharacteristic behavior.
+Extracting keystrokes slightly further into the collection phase could therefore be a viable alternative.
+
+%Positive: high variation in collection. Very old computers though (probably old dataset), but that doesnt necessarily mean anything.
+
+\subsection{Neural networks}
+The neural networks in the PA system output expected timing values for mono- and digraphs, as opposed to making the decision themselves.
+The final decision is made based on deviations alone, and the PA system is therefore only reliant on genuine user data for training.
+This removes the need for shipping the software with imposter data.
+However, the dataset used to test Mondal's \cite{mondal} CA system does have available imposter anyway, so this does not have a meaningful impact for incorporating the PA system into said CA system.
+
+Kim et al. \cite{KIM2017} mentioned that Ahmed and Traore's system is impractical due to high amounts of network weights to be optimized seen in relation to the amount of available training data.
+Abo-alian et al. \cite{CPE3718} also criticized the solution for it's small sample size and scalability issues.
+While it may be true, it seems unfair as the purpose of Ahmed and Traore's work was indeed to reduce the size of enrollment samples.
+Scaling the system into much larger sample sizes seems to defeat the purpose of picking the system over others in the first place.
+
+Ahmed and Traore \cite{Ahmed} claim that their system has a far lower processing time compared to the state of the art, with Gunetti and Picardi \cite{gnp} being mentioned in that context.
+Unfortunately, they only specify the time needed to train the neural networks, which was below two seconds for both networks on a 2.8 GHz processor.
+In case the user profile needs to be updated, this should be fast enough to be done in periods of inactivity.
+That aside, the processing time for the authentication should probably have been included.
+
+%Negative: Must be retrained
+%Negative: They claim "far lower processing time" than 
 
 %Can possibly use the digraph approx. method along with another system?
 
-%Positive: Completely unrestricted enrolllment, suitable for master project.
-%Positive: high variation in collection. Very old computers though (probably old dataset), but that doesnt necessarily mean anything.
-%Positive: Only relies on genuine user data, doesn't need to be trained with imposter data.
 
-%Negative: They claim "far lower processing time" than 
-%Negative: Must be retrained
-%Negative: 70% in fig 10 has wrong FAR? Really would like to see that performance. Also, their stated performance of 0.0152% FAR and 4.85 % FNMR doesn't exist in the figure. Probably several errors here.
-%Negative: Super inconsistent sample size?? based on their reference to GNP's sample size, I can ASSUME "digraphs" means keystrokes.
-%Negative: While it uses a small selected enrollment sample, way more data is in reality needed to decide how small of a sample can actually be used. Of course, they have a large sample size, so that their findings can probably be used in other settings, but if another probability threshold is to be used, determining the needed sample size is difficult.
 
 % http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full WRITE ABOUT THIS AFTER AHMED
 
