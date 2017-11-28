@@ -199,36 +199,44 @@ The performance metrics used in Mondal's \cite{mondal} CA system is ANIA and ANG
 
 \chapter{State of the art}
 \label{chap:state}
+Periodic authentication and periodic identification are different in terms of the clasification algorithms used, as identification systems need to compare the typing behavior of the current user to every legal user in the system in order to determine who it is.
+While the purpose of such systems are slightly different than authentication systems, they are included in the state of the art.
+The reason for this is that they may use comparison methods such as distance measures and machine learning which may be applicable in authentication systems, even if the classification algorithm is inappropriate.
+Examples of such systems are 
 
-
-
-\\\\\\\\
-%NOTE: Add KIM and CPE to list
 %NOTE: Write about what systems use which n-graphs
-%NOTE: Remove following text.
 %NOTE: http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full HAS A GOOD OVERVIEW OF STATE OF THE ART. 
 %NOTE: http://www.sciencedirect.com/science/article/pii/S1568494617305847 THIS ONE TOO
 %NOTE: https://www.hindawi.com/journals/tswj/2013/408280/ HAS A LOT OF DIFFERENT POINTS TO TALK ABOUT IN STATE OF ART
 \begin{table}[h]
-\begin{tabular}{ |c|c|c|c|p{1.5cm}|p{1.9cm}|p{2cm}|p{1.5cm}| } 
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{ |c|c|c|c|p{2.1cm}|p{1.9cm}|p{2cm}|p{1.5cm}|c| } 
  \hline
- \bf Paper & \bf Block & \bf Users & \bf Uncontr. & \bf Method & \bf Perf. & \bf Notes & n-graph\\ \hline
+ \bf Paper & \bf Block & \bf Users & \bf Task & \bf Method & \bf Perf. & \bf Notes & Feature & DB \\ \hline
  \bf Messerman & 50 - 150 & 55 & Webmail & R\&A &  FAR 2.02\% FRR 1.84\% & adaptive user model & \\ \hline
- \bf Ferreira & 250 & 60 & Yes & R\&A & EER 1.4\% & Updates user profile, also triggers authentication asynch & Dw, Fl, 2, 3, 4\\ \hline
+ \bf Ferreira & 250 & 60 & Unconstrained & R\&A & EER 1.4\% & Updates user profile, also triggers authentication asynch & Dw, Fl, 2, 3, 4 & \\ \hline
  Davoudi(2) & & & & & & & \\ \hline
  %Singh &- & - & - & - & - & STATIC AUTHENT. DONT BOTHER & \\ \hline
- Kaneko & ~200 & 51 & No & Euclidian & 0.66\% EER & Static fixed text, jap. & di \\ \hline
- Ahmed & 500 & 53 & Yes & MLP Neural Networks & FAR 0.0152\% FRR 4.82\% ERR 2.45\% & & mono di\\\hline
- Gunetti & ~800 & 40 & Webform & R\&A & FAR 0.005\% FRR 4.833\% & & 2,3,4\\ \hline
+ %Kaneko \cite{Kaneko} & ~200 & 51 & No & Euclidian & 0.66\% EER & Static fixed text, jap. & di \\ \hline
+ Ahmed & 500 & 53 & Unconstrained & MLP Neural Networks & FAR 0.0152\% FRR 4.82\% ERR 2.13\% & & mono di\\\hline
+ Gunetti & ~800 & 40 & Webform & R\&A & FAR 0.005\% FRR 4.833\% & & 2,3,4 & Own\\ \hline
  \bf Hu et al. & 36 & 19 & Webform & R\&A, k-NN & FAR 0.045\% FRR 0.005\% & Static text & - \\ \hline
  \cite{Pinto2014} & 150 & 10 & Uncontr & R\&A & FMR ~2\% FNMR ~2\% & Lacks clarity & Dw, Fl, 2, 3, 4 \\ \hline
  \cite{900words} & ~ 900 words & 2000 & No & KRR, TRBF & EER 1.39\% & Final decision after all words in test set & Tri \\ \hline
- \cite{KIM2017} & 1000 & 150 & Scripts & K-means clustering & EER 0.44\% & Korean & Di \\ \hline
+ \cite{KIM2017} & 1000 & 150 & Static text & K-means clustering & EER 0.44\% & Korean & Di \\ \hline
  %\cite{CPE3718} & 14 & 31 & Password & MLP Neural Network & EER 0.051\% & Static auth \\ \hline
+ \cite{Solami} & ~800 & 14 & Webform & K-means clustering & Accuracy 100\% & & Digraph duration & \cite{gnp}\\ \hline
+ \cite{Janakiraman2007} & Varying & 22 & Unconstrained & Bhattacharyya distance & Accuracy 70\%-100\% & & Digraph flight time, key dwell time & Own\\ \hline
+ \cite{Monrose} &  & 31 & Static text & Euclidian distance & Accuracy 23\% & &  & Own\\ \hline
+
+ 
+
+ 
  
 
  
 \end{tabular}
+}
 \end{table}
 
 % Enrollment size:
