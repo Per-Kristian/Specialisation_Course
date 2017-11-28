@@ -79,16 +79,16 @@ NTNU in Gj\o{}ovik
 \label{chap:introduction}
 
 Periodic authentication (PA) based on keystroke dynamics is a growing research area with increasingly promising results.
-There is a variety of mechanisms and algorithms built into PA systems, some more successfully than others.
+There is a variety of mechanisms and algorithms built into published PA systems, some more successfully than others.
 I will in this survey attempt to cover the state of the art and review some of the best performing PA systems, comparing them against each other.
 
 The purpose of the survey is to prepare for my upcoming master thesis on combining continuous and periodic authentication systems.
 I will there be extending the continuous authentication (CA) system proposed in Soumik Mondal's PhD thesis \cite{mondal} with a PA system in order to determine if the combination of such systems can have positive effects on performance.
 Therefore, I will select PA systems to review in detail which consist of interesting and valuable functionality, or are worth discussing for other reasons.
-The PA systems will be described in their entirety, though I will most likely be picking parts from several PA systems to be combined with the CA system.
+The PA systems will be described in their entirety, though in the master thesis I will most likely be picking parts from several PA systems to be combined with the CA system.
 Functionality found to be especially useful in that regard will be highlighted or discussed in each individual review.
 
-Background information on keystroke dynamics will be given in \cref{chap:background}, including an introductory explanation of biometrics and relevant terms used in the research field.
+Background information on authentication based on keystroke dynamics will be given in \cref{chap:background}, including an introductory explanation of biometrics and relevant terms used in the research field.
 In \cref{chap:state}, an overview of the general state of the art will be covered.
 \Cref{chap:gnp} contains a review of PA system using a statistical approach of which several other researchers have based their own systems upon.
 \Cref{chap:messerman} and \cref{chap:ferreira} describe two such systems, each with their own methods for improving the original system.
@@ -137,19 +137,19 @@ Until that happens, the impostor has free reign over the genuine user's account 
 The features extracted from keystrokes vary between different systems.
 For single key actions, there are two events happening, namely Key Down and Key Up, which means pressing and releasing the key, respectively.
 Timestamps are associated with these events, usually at the granularity of milliseconds.
-From these timestamps, the \textit{duration/dwell time} of the keypress can easily be determined.
+From these timestamps, the \textit{dwell time} of the keypress can easily be determined.
 When two or more sequential keypresses (n-graphs) are to be considered in relation to each other, a number of features can be extracted.
 As an example, the \textit{digraph} 'AB' may have the timing values as shown in \cref{tab:timing-example}.
-From those values, one could extract the durations of the single keys, but also the following features: 
+From those values, one could extract the dwell times of the single keys, but also the following features called \textit{digraph latencies}: 
 
 \begin{itemize}
-\item B\textsubscript{down}--A\textsubscript{down}(latency)
-\item B\textsubscript{up}--A\textsubscript{down} (duration)
-\item B\textsubscript{down}--A\textsubscript{up} (flight time)
-\item B\textsubscript{up}--A\textsubscript{up} (latency)
+\item $lat\textsubscript{dd} = B\textsubscript{down}-A\textsubscript{down} = 125ms-80ms = 45ms$
+\item $lat\textsubscript{du} = B\textsubscript{up}-A\textsubscript{down} = 140ms-80ms = 60ms$
+\item $lat\textsubscript{ud} = B\textsubscript{down}-A\textsubscript{up} = 125ms-100ms=25ms$ (also called flight time)
+\item $lat\textsubscript{uu} = B\textsubscript{up}-A\textsubscript{up} = 140ms-100ms=40ms$
 \end{itemize}
-%NOTE: Should I use minus or arrow between these?
-The respective values would then be 45, 60, 25 and 40 milliseconds, calculated by subtracting the timestamp of the first key (A) from the timestamp of the second key (B).
+where for example lat\textsubscript{du} refers to the \textit{down-up} latency.
+In other words, this is the latency between pressing down the first key (A), and releasing the second key (B).
 The authentication system could then use these features to calculate the similarity to the reference template for instance by using one or more distance measures, or by using machine learning algorithms.
 
 \begin{table}[h]
@@ -199,7 +199,7 @@ The performance metrics used in Mondal's \cite{mondal} CA system is ANIA and ANG
 
 \chapter{State of the art}
 \label{chap:state}
-Periodic authentication and periodic identification are different in terms of the clasification algorithms used, as identification systems need to compare the typing behavior of the current user to every legal user in the system in order to determine who it is.
+Periodic authentication and periodic identification are different in terms of the classification algorithms used, as identification systems need to compare the typing behavior of the current user to every legal user in the system in order to determine who it is.
 While the purpose of such systems are slightly different than authentication systems, they are included in the state of the art.
 The reason for this is that they may use comparison methods such as distance measures and machine learning which may be applicable in authentication systems, even if the classification algorithm is inappropriate.
 Examples of such systems are 
@@ -225,7 +225,7 @@ Examples of such systems are
  \cite{900words} & ~ 900 words & 2000 & No & KRR, TRBF & EER 1.39\% & Final decision after all words in test set & Tri \\ \hline
  \cite{KIM2017} & 1000 & 150 & Static text & K-means clustering & EER 0.44\% & Korean & Di \\ \hline
  %\cite{CPE3718} & 14 & 31 & Password & MLP Neural Network & EER 0.051\% & Static auth \\ \hline
- \cite{Solami} & ~800 & 14 & Webform & K-means clustering & Accuracy 100\% & & Digraph duration & \cite{gnp}\\ \hline
+ \cite{Solami} & ~800 & 14 & Webform & K-means clustering & Accuracy 100\% & & Digraph latency & \cite{gnp}\\ \hline
  \cite{Janakiraman2007} & Varying & 22 & Unconstrained & Bhattacharyya distance & Accuracy 70\%-100\% & & Digraph flight time, key dwell time & Own\\ \hline
  \cite{Monrose} &  & 31 & Static text & Euclidian distance & Accuracy 23\% & &  & Own\\ \hline
 
@@ -250,7 +250,7 @@ Their system uses two distance measures, namely absolute (A) and relative (R) me
 The R and A measures are summed to produce a final distance.
 Following is a summary of how the R and A measures are calculated.
 
-Given an attempt sample and a stored sample, a probe and reference is built by extracting the n-graphs shared by both samples into feature vectors sorted by n-graph durations (for instance the time between pressing the first and second key). 
+Given an attempt sample and a stored sample, a probe and reference is built by extracting the n-graphs shared by both samples into feature vectors sorted by n-graph latency (for instance \textit{down-down} latency).
 The relative distance between the probe and reference can then be calculated as follows.
 The position of each n-graph in the probe is compared to the position of the same n-graph in the reference, producing a position distance for every n-graph.
 The position distances between all the n-graphs are then summed before being normalized, resulting in an R measure.
@@ -281,7 +281,7 @@ While everything is typed slower, the \textit{relative} speed between different 
 
 On the other hand, the A measure takes the absolute speed of corresponding n-graphs in two samples into account, as the absolute speed of an imposter's typing pattern is less likely to be similar to the reference than that of the genuine user.
 For this measure to be calculated, shared n-graphs in an attempt sample and stored sample are compared and deemed to either be \textit{similar} or not.
-If the durations for these n-graphs are different from eachother, they are regarded as \textit{similar} if the longer duration divided by the shorter duration is between 1 and an arbitrary threshold.
+If the latencies for these n-graphs are different from eachother, they are regarded as \textit{similar} if the longer latency divided by the shorter latency is between 1 and an arbitrary threshold.
 Their reason for using a threshold instead of relying on standard deviation is that it enables them to use n-graphs which only occur once in the samples.
 The authors chose 1.25 as the threshold for their experiments after testing various thresholds on the data of the five first subjects in their experiment, to avoid overfitting.
 Then, they define the A measure of two samples as 1 -- (number of similar n-graphs between the samples) / (total number of n-graphs shared between the samples).
@@ -551,10 +551,10 @@ An important difference between the two systems is that while Messerman et al. o
 They refer to a previous study \cite{superOld}, where they along with a third author describe their own method for calculating A measures.
 As shown in \cref{sec:gnp-algorithm}, Gunetti and Picardi used a threshold of 1.25 in the calculation of A measures to determine whether n-graphs from the probe and reference were similar.
 Ferreira and Santos' method takes advantage of standard deviations, as every n-graph of a \textit{subtemplate} has an associated average, standard deviation and number of occurrences.
-Subtemplates (called subsamples in original paper) are separated collections of \textbf{dwell times} for single keys, \textbf{flight times} for digraphs and \textbf{durations} for di-, tri- and fourgraphs extracted from a sample.
+Subtemplates (called subsamples in original paper) are separated collections of \textbf{dwell times} for single keys, \textbf{flight times} for digraphs and \textbf{down-down latencies} for di-, tri- and fourgraphs extracted from a sample.
 
-An example of a subtemplate would be all trigraph durations extracted from a sample.
-Then, every trigraph in the subtemplate would have a standard deviation, average duration and number of occurrences within the subtemplate.
+An example of a subtemplate would be all trigraph latencies extracted from a sample.
+Then, every trigraph in the subtemplate would have a standard deviation, average latency and number of occurrences within the subtemplate.
 Using these values, they calculate the 10\% most consistent n-graphs in every subtemplate, and store a record of them in the user profile.
 During comparisons, they apply a lower similarity threshold when comparing n-graphs that are among the 10\% most consistent.
 This enables them to place more strict expectations where the genuine user rarely deviates from their usual typing patterns.
@@ -564,7 +564,7 @@ Unfortunately, they do not describe exactly how this adjustment is performed.
 Taking consistent n-graphs into account, the rest of the A measure is calculated as described in \cref{chap:gnp}. The R measure is also calculated in the same manner as the original method, and the A and R measure are combined into what they call the \textit{global score}.
 Note that I will refer to their matching score as a \textit{distance} in order to more easily show their system's relation to the other PA systems using R and A measures. 
 Distances and match scores generally work in the same way, except high scores indicate more similarity, whereas high distances indicate \textit{dissimilarity}.
-While a probe is compared to several other users in \cite{gnp, Messerman}, Ferraira and Santos' PA system bases its decisions solely on a global distance threshold.
+While a probe is compared to several other users in \cite{gnp, Messerman}, Ferreira and Santos' PA system bases its decisions solely on a global distance threshold.
 Interestingly, the global distance threshold is calculated individually for every user.
 This is done computing the global distance between every 750 keystroke sample in the database and the merged references, not including their own occurrences, which essentially is a leave-one-out cross validation.
 The average distance of all of these calculations give an expectation of how the genuine user should be performing compared to their own profile.
@@ -624,7 +624,7 @@ While not involving other users positively affects the scalability of the PA sys
 This could probably be reduced if necessary, though the performance impact would have to be analyzed extensively beforehand.
 %Omitted by suggestion: Regardless, as I will not make a real-time application this is not an issue in my specific case.
 Another feature that could be problematic for a real-time implementation is periodically updating the user profile, as it would corrupt the user database if imposters were falsely accepted.
-However, three consecutive attempts would have to be accepted in Ferraira and Santos' system, which lowers this risk.
+However, three consecutive attempts would have to be accepted in Ferreira and Santos' system, which lowers this risk.
 If an imposter were accepted three times in a row, the user profile would have to be retroactively rolled back to a valid state.
 Again, this is another feature that can be omitted from the simulations in my master thesis.
 
@@ -648,7 +648,7 @@ Regarding the performance results from the \textit{prototype} experiment, it doe
 \subsection{Follow-up study}
 A follow up study was performed by Santos and two other authors where they investigated ways to lower the sample size and positively affect the performance of the PA system \cite{Pinto2014}.
 Using different weights for different types of features (dwell, flight, digraph, trigraph, fourgraph) and different weights for A and R measures, they were able to reduce the size of attempt samples to 150 keystrokes, with an FMR and FNMR of around 2\%.
-They found that dwell times, flight times and digraphs were the most effective features to be used for authentication.
+They found that dwell times, flight times and digraphs latencies were the most effective features to be used for authentication.
 However, the experiments were performed with only 10 participants, and generally lacks clarity, especially so regarding the performance.
 I will therefore not discuss this paper in detail.
 
@@ -666,7 +666,7 @@ For this reason, the authors proposed a method called \textit{sorted time mappin
 Their system relies on covering the most frequently used \textit{monographs}.
 The definition of "frequent" in this context is flexible, as it means the set of keys with a higher chance of occurrence than a certain probability threshold.
 In this case, "chance of occurrence" means the chance of a key being \textit{the next key to be pressed}, not the chance of it occurring once in an entire enrollment sample.
-The size of the enrollment sample must then be decided so that all monographs above the probability threshold is covered.
+The size of the enrollment sample must then be decided so that all monographs above the probability threshold are covered.
 For instance, if the probability threshold is set to 0.001, all keys with higher chance of occurrence than 0.1\% must be covered in the enrollment sample, and the size of the enrollment sample must be set to a value that satisfies this criteria.
 More on how this size is determined is described in \cref{sec:ahmed-experimental}.
 
@@ -676,8 +676,9 @@ One network processes monographs, while the other processes digraphs.
 For training the digraph network, a \textit{digraph mapping table} must be generated based on the data from the enrollment sample.
 This table contains an entry for the keycode of every key in the enrollment sample.
 These entries are sorted by the average flight time \underline{to} the monographs, based on all recorded digraphs with that monograph as the second key.
-Every key then has an \textit{digraph key order (DKO)}, which represents the average flight time to that key relative to all other keys. 
+Every key then has a \textit{digraph key order (DKO)}, which represents the average flight time to that key relative to all other keys. 
 The actual average flight times are excluded from the table; only the DKO of each key is included.
+One may notice a certain resemblance to the calculation of Gunetti and Picardi's \cite{gnp} R measure.
 Similarly, a \textit{monograph mapping table} is needed for training the monograph network. 
 This table is ordered by dwell times instead of flight times, giving each key from enrollment a \textit{monograph key order}.
 
@@ -837,6 +838,44 @@ That aside, the processing time for the authentication should probably have been
 %NOTE: VILLANI MAY BE WORTH INCLUDING BECAUSE OF EUCLIDIAN DISTANCE (incl. state)
 % https://www.hindawi.com/journals/tswj/2013/408280/talks about machine learning
 \chapter{Concluding discussion}
+After having covered the state of the art and reviewed a number of PA system in detail, various mechanisms and algorithms have been discussed.
+As stated in \cref{chap:introduction}, the systems have been reviewed as they are described in the original work.
+However, for incorporating a PA system into a CA system, parts of different PA systems can be mixed and optimized to fit the original CA system.
+Therefore, certain aspects I have criticized may be excluded from the resulting CA+PA combination so that their disadvantages can be avoided.
+The excluded parts can then be replaced by more fitting functionality from other PA systems.
+
+Gunetti and Picardi's \cite{gnp} R and A measures are a good representation of the state of the art for statistical approaches to PA, as they have been adopted by several other PA systems and give good results in terms of error rates.
+Their original scalability problems have been addressed in a number of ways, including those discussed in \cref{chap:messerman} and \cref{chap:ferreira}, resulting in more practical systems.
+
+Machine learning has also become a popular approach to PA, and the digraph prediction method presented by Ahmed and Traore \cite{Ahmed} allows a PA system to base itself on relatively small enrollment samples.
+As Mondal's \cite{mondal} CA experiments were based on larger training data (around 5000 keystrokes) compared to that of Ahmed and Traore, it would be interesting to see how this functionality could interact with the CA system.
+A possibility could be to have both the CA system itself and the incorporated PA system use the digraph prediction functionality, either in order to lower the amount of training data used, or to explore the effects on performance using the original amount. 
+This needs further investigation.
+
+One of the important focuses of this literature review has been on the block sizes, or the length of attempt samples.
+Incorporating a PA system which bases itself on a block size much larger than the ANIA rate of the CA system would in many cases cause the CA system to detect imposters before the PA system could even gather enough information to make a decision.
+This would essentially defeat the purpose of incorporating the PA system in the first place, meaning that block sizes smaller than or similar to the CA system's ANIA value is ideal.
+That, in addition needing low a FNMR in order not to worsen the CA's ANGA rates is satisfied by the systems discussed in \cref{chap:messerman,chap:ferreira,chap:ahmed}.
+
+The experiments performed to test the discussed PA systems also had similar data collection phases to that of the CA system's experiments, in the sense that they were based on free-text.
+While the data collection in Messerman et al. \cite{Messerman} was done in an e-mail client and that of Gunetti and Picardi \cite{gnp} was done in a webform, Ferreira and Santos \cite{superResults} as well as Ahmed and Traore \cite{Ahmed} had completely uncontrolled data collection phases.
+This indicates that the PA performance rates may be similar on the CA system's dataset, further enhancing the confidence in parts of these systems being viable for incorporation into the CA system.
+
+Lastly, I would like to mention that there may exist other potentially viable functionalities in existing literature outside of the reviewed PA systems.
+An example of this is using a sliding window for attempt samples \cite{sliding}.
+Instead of performing PA after every \textit{n} keystrokes where \textit{n} is equal to the block size used, the authentication can base itself on the same block size \textit{n}, but at more regular intervals.
+This can be time based so that authentication is performed on a time interval, for instance one minute, using the last \textit{n} keystrokes recorded.
+Of course, if the amount of keystrokes recorded since last authentication reaches \textit{n} before one minute has passed, the authentication would have to be triggered earlier.
+Basing the sliding window on the amount of recorded keystrokes instead of time is also possible.
+An example would be to execute the authentication after \textit{m} keystrokes where \textit{m} < block size \textit{n}.
+Both of these cases allow the authentication to be performed more often than the block size alone would permit, possibly catching imposters more quickly.
+
+This literature review has given me valuable knowledge, preparing me for my coming master thesis. This was the goal of the project, and though discussing every interesting PA system in detail was beyond the scope, the reviews in \cref{chap:gnp,chap:messerman,chap:ferreira,chap:ahmed} allowed me to perform a deep dive into a subset of the available literature.
+Not only did this enhance my understanding of these chapters, but allowed me to better understand the rest of the literature.
+
+
+
+
 \label{chap:conclusion}
 
 
