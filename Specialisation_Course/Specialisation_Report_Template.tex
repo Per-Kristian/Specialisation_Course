@@ -36,6 +36,7 @@
 \usepackage{here}
 \usepackage{subcaption}
 \usepackage{cleveref}
+\usepackage{makecell}
 
 \def\UrlFont{\tt}
 
@@ -204,39 +205,47 @@ While the purpose of such systems are slightly different than authentication sys
 The reason for this is that they may use comparison methods such as distance measures and machine learning which may be applicable in authentication systems, even if the classification algorithm is inappropriate.
 Examples of such systems are 
 
+%NOTE: \cite{Messerman} and \cite{superResults} periodically updates user profiles.
+%NOTE: \cite{900words} experiments made final decision after all words in test set were considered.
+%NOTE: \cite{superResults} has asynchronous authentication
+
+%The lazy learning algorithm k-Nearest Neighbor is popular
+
+%NOTE: \cite{vural} is one of three? open databases containing free-text keystroke dynamics. 
 %NOTE: Write about what systems use which n-graphs
 %NOTE: http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full HAS A GOOD OVERVIEW OF STATE OF THE ART. 
 %NOTE: http://www.sciencedirect.com/science/article/pii/S1568494617305847 THIS ONE TOO
 %NOTE: https://www.hindawi.com/journals/tswj/2013/408280/ HAS A LOT OF DIFFERENT POINTS TO TALK ABOUT IN STATE OF ART
 \begin{table}[h]
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{ |c|c|c|c|p{2.1cm}|p{1.9cm}|p{2cm}|p{1.5cm}|c| } 
+\begin{tabular}{ |l|p{2.1cm}|l|p{2.15cm}|p{3cm}|p{2.3cm}|p{2.5cm}|l| } 
  \hline
- \bf Paper & \bf Block & \bf Users & \bf Task & \bf Method & \bf Perf. & \bf Notes & Feature & DB \\ \hline
- \bf Messerman & 50 - 150 & 55 & Webmail & R\&A &  FAR 2.02\% FRR 1.84\% & adaptive user model & \\ \hline
- \bf Ferreira & 250 & 60 & Unconstrained & R\&A & EER 1.4\% & Updates user profile, also triggers authentication asynch & Dw, Fl, 2, 3, 4 & \\ \hline
- Davoudi(2) & & & & & & & \\ \hline
+ \bf Paper & \bf Block & \bf Users & \bf Task & \bf Method & \bf Performance & Feature & DB \\ \hline
+ \cite{gnp} & 700-900 & 40 & Webform & R and A measures & FMR 0.005\% FNMR 4.833\% & 2-, 3- and 4-graph latency & Own*\\ \hline
+ \cite{Messerman} & 50 - 150 & 50 & Webmail & R and A measures & FMR 2.02\%  FNMR 1.84\% & n-graph latency & Own\\ \hline
+ \cite{superResults} & 250 & 60 & Unconstrained & R and A measures & EER 1.4\% & Dwell time, flight time for 2-, 3-, and 4-graphs & Own\\ \hline
+ \cite{Pinto2014} & 150 & 10 & Unconstrained & R and A measures & FMR ~2\% FNMR ~2\% & Dwell time, flight time for 2-, 3-, and 4-graphs & Own \\ \hline
+ \cite{davoudi2009} & 700-900 & 21 & Webform & {Modified R measure} & FMR 0.08\% FNMR 18.8\% & Digraph latency & \cite{gnp} \\ \hline
+ \cite{davoudi2010} & 700-900 & 21 & Webform & Weighted R measure & FMR 0.07\% FNMR 15.2\% & Digraph latency & \cite{gnp} \\ \hline
  %Singh &- & - & - & - & - & STATIC AUTHENT. DONT BOTHER & \\ \hline
  %Kaneko \cite{Kaneko} & ~200 & 51 & No & Euclidian & 0.66\% EER & Static fixed text, jap. & di \\ \hline
- Ahmed & 500 & 53 & Unconstrained & MLP Neural Networks & FAR 0.0152\% FRR 4.82\% ERR 2.13\% & & mono di\\\hline
- Gunetti & ~800 & 40 & Webform & R\&A & FAR 0.005\% FRR 4.833\% & & 2,3,4 & Own\\ \hline
- \bf Hu et al. & 36 & 19 & Webform & R\&A, k-NN & FAR 0.045\% FRR 0.005\% & Static text & - \\ \hline
- \cite{Pinto2014} & 150 & 10 & Uncontr & R\&A & FMR ~2\% FNMR ~2\% & Lacks clarity & Dw, Fl, 2, 3, 4 \\ \hline
- \cite{900words} & ~ 900 words & 2000 & No & KRR, TRBF & EER 1.39\% & Final decision after all words in test set & Tri \\ \hline
- \cite{KIM2017} & 1000 & 150 & Static text & K-means clustering & EER 0.44\% & Korean & Di \\ \hline
+ \cite{Ahmed} & 500 & 53 & Unconstrained & MLP Neural Networks & FMR 0.0152\%, FNMR 4.82\%, ERR 2.13\% & Dwell time, digraph flight time & Own\\\hline
+ \cite{hu} & 36 & 19 & Webform, static text & R and A measures, k-Nearest Neighbor & FMR 0.045\% FNMR 0.005\% & n-graph latency & Own \\ \hline
+ \cite{900words} & 900 words & 2000 & Pre-defined tasks & Kernel Ridge Regression, truncated-RBF kernel & EER 1.39\% & Trigraph flight times & \cite{chang} \\ \hline
+ \cite{KIM2017} & 1000 & 150 & Static text & K-means clustering & EER 0.44\% & Dwell time, digraph latencies & Own \\ \hline
  %\cite{CPE3718} & 14 & 31 & Password & MLP Neural Network & EER 0.051\% & Static auth \\ \hline
- \cite{Solami} & ~800 & 14 & Webform & K-means clustering & Accuracy 100\% & & Digraph latency & \cite{gnp}\\ \hline
- \cite{Janakiraman2007} & Varying & 22 & Unconstrained & Bhattacharyya distance & Accuracy 70\%-100\% & & Digraph flight time, key dwell time & Own\\ \hline
- \cite{Monrose} &  & 31 & Static text & Euclidian distance & Accuracy 23\% & &  & Own\\ \hline
+ \cite{Solami} & 700-900 & 14 & Webform & K-means clustering & Accuracy 100\% & Digraph latency & \cite{gnp}\\ \hline
+ \cite{Janakiraman2007} & Varying & 22 & Unconstrained & Bhattacharyya distance & Accuracy 70\%-100\% & Digraph flight time, key dwell time & Own\\ \hline
+ \cite{Monrose} & - & 31 & Pre-defined tasks & Euclidian distance, weighted probability & Accuracy 23\% & Dwell time, digraph flight time & Own\\ \hline
+ \cite{sliding} & 1 min sliding window & 31 & Static text & Euclidian distance & FMR 1\% FNMR 11.5\% & Public dataset & Own*\\ \hline
+ \cite{BOURS201236} & Continuous & 25 & Unconstrained & Scaled Manhattan distance & 182 ANIA & Dwell time, digraph latency & Own\\ \hline
+ \cite{mondal} & Continuous & 53 & Unconstrained & Scaled Euclidian distance, Correlation distance, neural network, support vector machine & 499 ANIA, 16057 ANGA & Dwell time, digraph latencies & Own \\ \hline
+ \cite{monaco} & 775 on average & 119 & Pre-defined tasks & k-Nearest Neighbor & EER 3.7\% & Dwell time, flight time and digraph latency & Own \\ \hline
+ \cite{park} & 300 & 35 & Pre-defined tasks & Kolmogorov-smirnov Test & EER 0.09\% & Digraph latency & Own \\ \hline
 
- 
-
- 
- 
-
- 
 \end{tabular}
 }
+\caption{Summary of state of the art in PA and CA systems. In the database (DB) column, systems marked with a star * have released their database to the public.}
 \end{table}
 
 % Enrollment size:
@@ -686,7 +695,7 @@ The digraph network is trained with all digraphs from the enrollment sample enco
 As seen in \cref{fig:ahmed-networks} (b), it is trained with two inputs, namely "from" and "to", which are fed the DKO of the two keys involved in a digraph. 
 The training output is the actual flight time of the digraph.
 Training the monograph network is done similarly, though with MKOs as input and actual dwell times as output.
-Both networks are trained using the Levenberg–Marquardt algorithm and the monograph network's hidden layer consists of 16 nodes, while the digraph network's hidden layer has 40.
+Both networks are trained using the Levenberg–Marquardt \cite{levenberg_1944} algorithm and the monograph network's hidden layer consists of 16 nodes, while the digraph network's hidden layer has 40.
 
 \begin{figure}[h]
     \centering
@@ -838,6 +847,8 @@ That aside, the processing time for the authentication should probably have been
 %NOTE: VILLANI MAY BE WORTH INCLUDING BECAUSE OF EUCLIDIAN DISTANCE (incl. state)
 % https://www.hindawi.com/journals/tswj/2013/408280/talks about machine learning
 \chapter{Concluding discussion}
+\label{chap:conclusion}
+
 After having covered the state of the art and reviewed a number of PA system in detail, various mechanisms and algorithms have been discussed.
 As stated in \cref{chap:introduction}, the systems have been reviewed as they are described in the original work.
 However, for incorporating a PA system into a CA system, parts of different PA systems can be mixed and optimized to fit the original CA system.
@@ -871,12 +882,11 @@ An example would be to execute the authentication after \textit{m} keystrokes wh
 Both of these cases allow the authentication to be performed more often than the block size alone would permit, possibly catching imposters more quickly.
 
 This literature review has given me valuable knowledge, preparing me for my coming master thesis. This was the goal of the project, and though discussing every interesting PA system in detail was beyond the scope, the reviews in \cref{chap:gnp,chap:messerman,chap:ferreira,chap:ahmed} allowed me to perform a deep dive into a subset of the available literature.
-Not only did this enhance my understanding of these chapters, but allowed me to better understand the rest of the literature.
+Not only did this enhance my understanding of these specific PA systems, but allowed me to better understand the rest of the relevant literature.
 
 
 
 
-\label{chap:conclusion}
 
 
 % NOTE: Mention possibility of sliding window?
