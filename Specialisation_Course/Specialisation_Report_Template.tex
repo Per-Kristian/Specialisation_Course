@@ -200,10 +200,32 @@ The performance metrics used in Mondal's \cite{mondal} CA system is ANIA and ANG
 
 \chapter{State of the art}
 \label{chap:state}
+This section gives an overview of the state of the art, and the different methods and approaches taken by researchers.
+While this literature study has a focus on PA systems, I have also included CA \cite{BOURS201236, mondal} and periodic identification systems \cite{Solami, Janakiraman2007, Monrose} in the state of the art, as they are relevant to the topic.
 Periodic authentication and periodic identification are different in terms of the classification algorithms used, as identification systems need to compare the typing behavior of the current user to every legal user in the system in order to determine who it is.
-While the purpose of such systems are slightly different than authentication systems, they are included in the state of the art.
-The reason for this is that they may use comparison methods such as distance measures and machine learning which may be applicable in authentication systems, even if the classification algorithm is inappropriate.
-Examples of such systems are 
+Even if the classification algorithm is inappropriate for authentication systems, they are relevant as they may use comparison methods such as distance measures and machine learning, which can also be used for PA.
+
+\section{Data collection}
+A large portion of the PA (and CA) authentication systems in literature had participants writing text freely during the data collection phase of the experiments, with the exception of three studies \cite{hu, KIM2017, sliding} using static text.
+Writing static text refers to typing a pre-determined text, which is generally done by having the patients manually typing a long text as they are reading it.
+
+Of the free-text studies, several were performed in an unconstrained manner, meaning that the collection was performed in the background of participants' own computers as they were performing their usual tasks. \cite{superResults, Pinto2014, Ahmed, Janakiraman2007, BOURS201236, mondal}.
+One study captured keystrokes in the background of an e-mail application \cite{Messerman}.
+Some studies used keystroke data collected from a webform where participants were asked to write text freely before submitting the content to the researchers \cite{gnp, davoudi2009, davoudi2010, Solami}.
+Certain studies were found where the researchers gave the participants pre-defined tasks to perform while the keystroke data was being collected \cite{900words, Monrose, monaco, park}, for example writing fictional e-mails.
+
+While most studies have not openly shared their collected keystroke data, there exists at least three open free-text keystroke databases. 
+Vural et al.'s \cite{vural} database contains around 840 000
+\cite{vural, gnp, sliding}.
+
+
+Most studies relied on their own collected data, 
+
+%NOTE: sjekk om Hu ikke har free-text
+
+\section{Database}
+
+%NOTE: \cite{vural} is one of three? open databases containing free-text keystroke dynamics. 
 
 %NOTE: \cite{Messerman} and \cite{superResults} periodically updates user profiles.
 %NOTE: \cite{900words} experiments made final decision after all words in test set were considered.
@@ -211,12 +233,12 @@ Examples of such systems are
 
 %The lazy learning algorithm k-Nearest Neighbor is popular
 
-%NOTE: \cite{vural} is one of three? open databases containing free-text keystroke dynamics. 
 %NOTE: Write about what systems use which n-graphs
 %NOTE: http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full HAS A GOOD OVERVIEW OF STATE OF THE ART. 
 %NOTE: http://www.sciencedirect.com/science/article/pii/S1568494617305847 THIS ONE TOO
 %NOTE: https://www.hindawi.com/journals/tswj/2013/408280/ HAS A LOT OF DIFFERENT POINTS TO TALK ABOUT IN STATE OF ART
 \begin{table}[h]
+\label{tab:state}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{ |l|p{2.1cm}|l|p{2.15cm}|p{3cm}|p{2.3cm}|p{2.5cm}|l| } 
  \hline
