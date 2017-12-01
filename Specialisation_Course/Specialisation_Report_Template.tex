@@ -71,9 +71,13 @@ NTNU in Gj\o{}ovik
 
 \begin{abstract}
 
+User authentication based on keystroke dynamics is an active research area and several different methods have been proposed to improve the performance and viability of this authentication method.
+A specific sub-category of authentication systems based on keystroke dynamics record the user's keystrokes passively during the user session and attempt to remove access if the recorded behavior does not match that of the user account's true owner.
+Most of these systems analyze the typing behavior \textit{periodically}, while a few others do so continuously after every keystroke.
+The possibilities of incorporating mechanisms from \textit{periodic} authentication systems into an existing \textit{continuous} authentication system are explored in this paper.
+This is done by a state of the art survey, as well as detailed discussions on a selected number of proposed systems.
 
 \end{abstract}
-
 
 \tableofcontents
 \chapter{Introduction}
@@ -95,14 +99,11 @@ In \cref{chap:state}, an overview of the general state of the art will be covere
 \Cref{chap:messerman} and \cref{chap:ferreira} describe two such systems, each with their own methods for improving the original system.
 A PA system based on machine learning is discussed in \cref{chap:ahmed}, before conclusions are made in an overall discussion in \cref{chap:conclusion}.
 
-%NOTE: Maybe good at some point in chapter 1 to mention that you study the PA systems as they are described, but will most likely implement parts of it only in your master thesis when combining them with the CA system.
-
-%NOTE: write more about purpose of this document.
-%NOTE: Include description of sections.
 
 \chapter{Background}
 \label{chap:background}
 
+%NOTE PUT ANGA FORUMALS IN HERE
 Biometrics is increasingly utilized for user authentication, with fingerprint readers being built into personal devices such as smart phones and laptops.
 Biometric systems based on modalities such as fingerprint, hand print, iris, retina and facial recognition are to varying degrees now known to the general public.
 A common feature of these modalities are that they are \textit{biological} -- they are based on our individual anatomy.
@@ -178,7 +179,16 @@ According to the vocabulary specified in the ISO/IEC 2382-37 standard \cite{ISO-
 
 Bours and Mondal proposed in 2015 two new metric for evaluating the performance of CA systems, namely Average Number of Imposter Actions (ANIA) and Average Number of Genuine Actions (ANGA) \cite{CA-performance}.
 These rates look at how many actions imposters and genuine users on average can perform before being rejected by the authentication system, as it often is more useful to know how often users will be locked out than the probability of that happening per sample.
-They also provide formulas for converting PA systems' FAR into ANIA rates and FRR into ANGA rates.
+They also provide the following formulas for converting PA systems' FAR into ANIA rates and FRR into ANGA rates.
+
+\begin{equation}
+ANIA = \frac{block size}{(1-FMR)}
+\end{equation}
+
+\begin{equation}
+ANGA = \frac{block size}{FNMR}
+\end{equation}
+
 The performance metrics used in Mondal's \cite{mondal} CA system is ANIA and ANGA, and I will therefore use the conversion formulas from \cite{CA-performance} in order to easily compare the performance of PA systems to the CA system's performance.
 
 %NOTE: MOVE ANIA / ANGA to Background
@@ -229,24 +239,33 @@ Eleven studies involved 30 participants or more \cite{gnp, Messerman, superResul
 All of the mentioned studies extracted feature vectors using various types of latencies between consecutive keystrokes, however nine of them \cite{superResults, Pinto2014, Ahmed, KIM2017, Janakiraman2007, Monrose, BOURS201236, mondal, monaco} also extracted dwell times of single key actions.
 For consecutive keystrokes, eleven studies \cite{davoudi2009, davoudi2010, Ahmed, KIM2017, Solami, Janakiraman2007, Monrose, BOURS201236, mondal, monaco, park} considered only digraphs, one considered only trigraphs \cite{900words}, while the rest considered n-graphs with multiple values of n where $1<n$.
 
-Out of the periodic authentication and identification systems, \cite{Messerman, superResults, Pinto2014, Ahmed, hu, park}
-The block length used for feature extraction of probes was 500 keystrokes or less for 
+Out of the periodic authentication and identification systems, the block length used for feature extraction of probes was 500 keystrokes or less in seven studies \cite{Messerman, superResults, Pinto2014, Ahmed, hu, park}.
+Instead of using a fixed block length, Huang et al. \cite{sliding} proposed a time-based PA system which performs an authentication every minute, examining all keystroke actions performed during the last minute of the user session.
+This is a form of \textit{sliding window}, which is discussed in \cref{chap:conclusion}.
 
 \section{Method}
+Many studies have used statistical approaches to classification, while others utilize machine learning methods. 
+Gunetti and Picardi's \cite{gnp} R and A measures have been utilized in several researches \cite{gnp, superResults, Pinto2014, hu, sliding}.
+The R and A measures are described in \cref{chap:gnp}.
+One study only adopted the R measure \cite{Messerman}, while two studies applied their own customizations to the R measure \cite{davoudi2009, davoudi2010}.
+Other distance metrics used in literature are Euclidian \cite{Monrose}, Scaled Euclidian \cite{mondal}, Bhattacharyya \cite{Janakiraman2007} and Correlation \cite{mondal} distances.
+Park et al. \cite{park} used a Kolmogorov-Smirnov Test as their classifier.
+\textit{K-means clustering} was used for classification in \cite{KIM2017, Solami}, and \textit{kernel ridge regression} was utilized in \cite{900words}.
+Two studies have used the \textit{neural network} machine learning algorithm \cite{Ahmed, mondal}, where one of those studies also used a \textit{support vector machine} \cite{mondal}.
+Lastly, two studies applied the \textit{k-nearest neighbor} lazy learning algorithm.
+All the systems mentioned in this chapter are summarized in \cref{tab:state}.
 
 
 %NOTE: sjekk om Hu ikke har free-text
+%NOTE: husk å fikse UNCONSTRAINED i hele greien.
 
 
-%NOTE: \cite{vural} is one of three? open databases containing free-text keystroke dynamics. 
 
 %NOTE: \cite{Messerman} and \cite{superResults} periodically updates user profiles.
 %NOTE: \cite{900words} experiments made final decision after all words in test set were considered.
 %NOTE: \cite{superResults} has asynchronous authentication
 
-%The lazy learning algorithm k-Nearest Neighbor is popular
 
-%NOTE: Write about what systems use which n-graphs
 %NOTE: http://onlinelibrary.wiley.com/doi/10.1002/cpe.3718/full HAS A GOOD OVERVIEW OF STATE OF THE ART. 
 %NOTE: http://www.sciencedirect.com/science/article/pii/S1568494617305847 THIS ONE TOO
 %NOTE: https://www.hindawi.com/journals/tswj/2013/408280/ HAS A LOT OF DIFFERENT POINTS TO TALK ABOUT IN STATE OF ART
@@ -257,24 +276,24 @@ The block length used for feature extraction of probes was 500 keystrokes or les
  \hline
  \bf Paper & \bf Block length & \bf Users & \bf Task & \bf Method & \bf Performance & \bf Feature & \bf DB \\ \hline
  \cite{gnp} & 700-900 & 40 & Webform & R and A measures & FMR 0.005\% FNMR 4.833\% & 2-, 3- and 4-graph latency & Own*\\ \hline
- \cite{Messerman} & 50 - 150 & 50 & Webmail & R and A measures & FMR 2.02\%  FNMR 1.84\% & n-graph latency & Own\\ \hline
+ \cite{Messerman} & 50 - 150 & 50 & Webmail & R measure & FMR 2.02\%  FNMR 1.84\% & n-graph latency & Own\\ \hline
  \cite{superResults} & 250 & 60 & Unconstrained & R and A measures & EER 1.4\% & Dwell time, flight time for 2-, 3-, and 4-graphs & Own\\ \hline
  \cite{Pinto2014} & 150 & 10 & Unconstrained & R and A measures & FMR ~2\% FNMR ~2\% & Dwell time, flight time for 2-, 3-, and 4-graphs & Own \\ \hline
- \cite{davoudi2009} & 700-900 & 21 & Webform & {Modified R measure} & FMR 0.08\% FNMR 18.8\% & Digraph latency & \cite{gnp} \\ \hline
+ \cite{davoudi2009} & 700-900 & 21 & Webform & Modified R measure & FMR 0.08\% FNMR 18.8\% & Digraph latency & \cite{gnp} \\ \hline
  \cite{davoudi2010} & 700-900 & 21 & Webform & Weighted R measure & FMR 0.07\% FNMR 15.2\% & Digraph latency & \cite{gnp} \\ \hline
  %Singh &- & - & - & - & - & STATIC AUTHENT. DONT BOTHER & \\ \hline
  %Kaneko \cite{Kaneko} & ~200 & 51 & No & Euclidian & 0.66\% EER & Static fixed text, jap. & di \\ \hline
- \cite{Ahmed} & 500 & 53 & Unconstrained & MLP Neural Networks & FMR 0.0152\%, FNMR 4.82\%, ERR 2.13\% & Dwell time, digraph flight time & Own\\\hline
+ \cite{Ahmed} & 500 & 53 & Unconstrained & Neural Networks (NN) & FMR 0.0152\%, FNMR 4.82\%, ERR 2.13\% & Dwell time, digraph flight time & Own\\\hline
  \cite{hu} & 36 & 19 & Webform, static text & R and A measures, k-Nearest Neighbor & FMR 0.045\% FNMR 0.005\% & n-graph latency & Own \\ \hline
  \cite{900words} & 900 words & 2000 & Pre-defined tasks & Kernel Ridge Regression, truncated-RBF kernel & EER 1.39\% & Trigraph flight times & \cite{chang} \\ \hline
  \cite{KIM2017} & 1000 & 150 & Static text & K-means clustering & EER 0.44\% & Dwell time, digraph latencies & Own \\ \hline
  %\cite{CPE3718} & 14 & 31 & Password & MLP Neural Network & EER 0.051\% & Static auth \\ \hline
  \cite{Solami} & 700-900 & 14 & Webform & K-means clustering & Accuracy 100\% & Digraph latency & \cite{gnp}\\ \hline
  \cite{Janakiraman2007} & Minimum 2 & 22 & Unconstrained & Bhattacharyya distance & Accuracy 70\%-100\% & Dwell time, digraph flight time & Own\\ \hline
- \cite{Monrose} & - & 31 & Pre-defined tasks & Euclidian distance, weighted probability & Accuracy 23\% & Dwell time, digraph flight time & Own\\ \hline
+ \cite{Monrose} & Unknown & 31 & Pre-defined tasks & Euclidian distance, weighted probability & Accuracy 23\% & Dwell time, digraph flight time & Own\\ \hline
  \cite{sliding} & 1 min sliding window & 56 & Unconstrained & R and A measures & FMR 1\% FNMR 11.5\% & n-graph latency & Own*\\ \hline
  \cite{BOURS201236} & Continuous & 25 & Unconstrained & Scaled Manhattan distance & 182 ANIA & Dwell time, digraph latency & Own\\ \hline
- \cite{mondal} & Continuous & 53 & Unconstrained & Scaled Euclidian distance, Correlation distance, neural network, support vector machine & 499 ANIA, 16057 ANGA & Dwell time, digraph latencies & Own \\ \hline
+ \cite{mondal} & Continuous & 53 & Unconstrained & Scaled Euclidian distance, Correlation distance, NN, support vector machine & 499 ANIA, 16057 ANGA & Dwell time, digraph latencies & Own \\ \hline
  \cite{monaco} & 775 on average & 119 & Pre-defined tasks & k-Nearest Neighbor & EER 3.7\% & Dwell time, digraph latencies incl. flight time & Own \\ \hline
  \cite{park} & 300 & 35 & Pre-defined tasks & Kolmogorov-smirnov Test & EER 0.09\% & Digraph latency & Own \\ \hline
 
@@ -365,17 +384,17 @@ Involving all users in the process is rather counterintuitive for an authenticat
 This is further discussed in \cref{sec:gnp-scalability}.
 \subsection{Performance}
 The best performance of their system was achieved using a summation of R and A distances for 2-, 3-, and 4-graphs, reaching an FMR of 0.005\% and an FNMR of 4.833\%, though they call the rates "Imposter Pass Rate (IPR)" and "False Alarm Rate (FAR)".
-By using the formula provided in \cite{CA-performance}, we can convert these rates to ANIA and ANGA rates:
-
-\begin{equation}
-ANIA = \frac{block size}{(1-FMR)} = \frac{800}{(1-0.00005)} \approx 800
-\end{equation}
-
-\begin{equation}
-ANGA = \frac{block size}{FNMR} = \frac{800}{0.04833} \approx 16553 
-\end{equation}
+By using the formulas mentioned in \cref{chap:background}, we can convert these rates to ANIA and ANGA rates: $ANIA = \frac{800}{(1-0.00005)} \approx 800$ and $ANGA = \frac{800}{0.04833} \approx 16553$.
 The ANGA rate of 16553 is a positive result, though the ANIA rate of 800 is a clear issue.
 This is further discussed in \cref{sec:gnp-blocksizes}.
+
+%\begin{equation}
+%ANIA = \frac{block size}{(1-FMR)} = \frac{800}{(1-0.00005)} \approx 800
+%\end{equation}
+%
+%\begin{equation}
+%ANGA = \frac{block size}{FNMR} = \frac{800}{0.04833} \approx 16553 
+%\end{equation}
 
 \section{Discussion}
 \subsection{Scalability issues}
@@ -422,7 +441,7 @@ Therefore, the block size is clearly a major drawback of Gunetti and Picardi's a
 
 \subsection{Issues regarding enrollment}
 While the experimental setting was uncontrolled in the sense that the participants submitted their samples from their own computers without the researchers' presence and supervision, the samples did not necessarily capture the natural behavior of the participants.
-As opposed to non-intrusively and continuously capturing keystrokes in the background, the volunteers were instructed to perform a specific task.
+As opposed to non-intrusively and continuously capturing keystrokes in the background, the volunteers were instructed to perform a specific task, meaning they were not truly \textit{unconstrained}.
 One issue is that this could make them more aware of their own typing rhythm, thus cause slight differences compared to their natural typing.
 
 Another potential problem lies in the fact that the volunteers were suggested to write about something they enjoyed, such as holidays or movies.
@@ -650,7 +669,7 @@ Ten participants each produced a fixed-text stored sample of 200 keystrokes, and
 \section{Discussion}
 \label{sec:ferreira-discussion}
 Ferreira and Santos' PA system seems particularly fitting for my master thesis, as its intention to be used for protecting an entire workstation by observing keyboard input in all applications and contexts is similar to that of Mondal's CA system which I will be extending \cite{mondal}.
-The experiment's uncontrolled data collection phase also matches Mondal's experiment quite well, which makes comparing the systems more sensible.
+The experiment's unconstrained data collection phase also matches Mondal's experiment quite well, which makes comparing the systems more sensible.
 As I will be using Mondal's database for my own project, I am likely to receive similar results when applying Ferreira and Santos' methods to it, as the data should have similar amounts of variation in typing behavior per user.
 
 While their method for asynchronous authentication is a great measure for possibly detecting imposters even earlier than the block size originally allows, and even on special triggers, this is mostly relevant for actual real-time implementations of the software.
@@ -703,7 +722,7 @@ I will therefore not discuss this paper in detail.
 The PA system previously discussed in dedicated chapters have all applied a statistical approach for their authentication schemes.
 Machine learning is another approach that has gained popularity in recent years, and Ahmed and Traore \cite{Ahmed}'s proposed PA system is based on this approach.
 One of their goals was to decrease the needed amount of keystroke data from enrollment.
-PA systems which rely on an uncontrolled free-text enrollment phase will, depending on the amount of data collected, have varying amounts of different n-graphs recorded and stored.
+PA systems which rely on an unconstrained free-text enrollment phase will, depending on the amount of data collected, have varying amounts of different n-graphs recorded and stored.
 Therefore, a user may generate an attempt sample containing one or more n-graphs not present in the reference.
 For this reason, the authors proposed a method called \textit{sorted time mapping} for predicting what timing features a missing n-graph would have, based on relations between the n-graphs present in the reference.
 
@@ -724,7 +743,7 @@ Every key then has a \textit{digraph key order (DKO)}, which represents the aver
 The actual average flight times are excluded from the table; only the DKO of each key is included.
 One may notice a certain resemblance to the calculation of Gunetti and Picardi's \cite{gnp} R measure.
 Similarly, a \textit{monograph mapping table} is needed for training the monograph network. 
-This table is ordered by dwell times instead of flight times, giving each key from enrollment a \textit{monograph key order}.
+This table is ordered by dwell times instead of flight times, giving each key from enrollment a \textit{monograph key order (MKO)}.
 
 The digraph network is trained with all digraphs from the enrollment sample encoded as DKOs.
 As seen in \cref{fig:ahmed-networks} (b), it is trained with two inputs, namely "from" and "to", which are fed the DKO of the two keys involved in a digraph. 
@@ -739,7 +758,7 @@ Both networks are trained using the Levenberg–Marquardt \cite{levenberg_1944} 
     \label{fig:ahmed-networks}
 \end{figure}
 
-When the networks are trained, their weights are stored along with the monograph and digraph mapping tables as a \textit{reference signature}.
+When the neural networks are trained, their weights are stored along with the monograph and digraph mapping tables as a \textit{reference signature}.
 The reference signature is loaded during the authentication phase, as all users of the PA system utilize the same two neural networks, only with their own mapping tables and network weights.
 \Cref{fig:ahmed-authentication} shows how data is processed during periodic authentication.
 \begin{figure}[h]
@@ -763,10 +782,10 @@ Digraphs are processed similarly, as seen in \cref{fig:ahmed-authentication}, th
 It calculates this estimated flight time by viewing the digraphs relation to the other digraphs based on the DKOs from the digraph mapping table.
 The actual flight time of the probe digraph is compared to the output of the digraph network, regardless if the digraph was missing from enrollment or not.
 
-When the AADs for mono- and digraphs are calculated, the decision module combines them linearly using weights.
+When the AADs for mono- and digraphs (AAD\textsubscript{di}) are calculated, the decision module combines them linearly using weights.
 The combined deviation is calculated using the following equation:
 \begin{equation}
-D = B * AAD\textsubscript{mono} + (1-B)AAD\textsubscript{di}
+D = B * AAD\textsubscript{mono} + (1-B) * AAD\textsubscript{di}
 \end{equation}
 where D is the combined deviation and B is a balancing factor (the authors vary between calling this a balancing, dependability and tuning factor).
 The balancing factor is a value between 0 and 1, and lower values place more weight on the digraph AAD.
@@ -775,7 +794,7 @@ A combined deviation below the the threshold leads to the output being true, mea
 
 \section{Experimental setting}
 \label{sec:ahmed-experimental}
-Their main experiment consisted of a completely uncontrolled collection phase, with 53 participants installing a keystroke logging tool on their personal computers.
+Their main experiment consisted of a completely unconstrained and uncontrolled collection phase, with 53 participants installing a keystroke logging tool on their personal computers.
 They had a high variation in typing skills, age and gender, and around 18 000 keystrokes were collected from every user on average over the course of five months.
 
 As mentioned earlier, the size to be used for enrollment samples must cover the most frequently used keys.
@@ -784,9 +803,9 @@ They found that 1350 keystrokes were needed to cover 100\% of the most frequentl
 
 The first 1500 keystrokes from the experiment's collection phase were used to build the user profile, consisting of mono- and digraph mapping tables, along with networks with user specific weights.
 The rest of the keystrokes collected were divided into attempt samples of length 500, each being used as a genuine test sample and for attacking all other users.
-They call this a leave-one-out cross-validation test (LOOCV), though it seems to me that this is not the case as they specifically state that the user profiles were built using the \underline{first 1500} keystrokes \cite{Ahmed}.
-This means that all test sets are tested against the same training set, which can not be called cross-validation.
-Regardless, the test was repeated for all 53 participants.
+% They call this a leave-one-out cross-validation test (LOOCV), though it seems to me that this is not the case as they specifically state that the user profiles were built using the \underline{first 1500} keystrokes \cite{Ahmed}.
+%This means that all test sets are tested against the same training set, which can not be called cross-validation.
+The test was repeated for all 53 participants.
 
 \subsection{Performance}
 \label{sec:ahmed-performance}
@@ -839,11 +858,11 @@ This means that for every such pause, more keystrokes are needed to cover 1500 d
 In my description of their system, I have used "keystrokes" as a measure of length, based on the assumption that this is what they mean.
 
 \subsection{Experimental settings}
-Similarly to the PA system discussed in \cref{chap:ferreira}, the collection phase matches that of Mondal's \cite{mondal} experiments, as it was uncontrolled and performed on the participants' own computers.
+Similarly to the PA system discussed in \cref{chap:ferreira}, the collection phase matches that of Mondal's \cite{mondal} experiments, as it was unconstrained and performed on the participants' own computers.
 As they also had a high variance in participant characteristics such as age and gender, their dataset should include a rather large spectrum of contexts.
 This means that the test probes generated should cover those different contexts even if only 1500 keystrokes were used for enrollment, which partly covers the issue mentioned in \cref{sec:ahmed-discussion-sample}.
 
-The fact that they used the \textit{first} 1500 keystrokes for building user profiles in an uncontrolled collection phase seems slightly counterintuitive.
+The fact that they used the \textit{first} 1500 keystrokes for building user profiles in an unconstrained collection phase seems slightly counterintuitive.
 Immediately after a user installs the keystroke monitoring software is probably a period of time where they are more conscious about the fact that their typing patterns are being collected. 
 This could lead to some tension which could lead to slight variations representing uncharacteristic behavior.
 Extracting keystrokes slightly further into the collection phase could therefore be a viable alternative.
@@ -904,7 +923,7 @@ This would essentially defeat the purpose of incorporating the PA system in the 
 That, in addition needing low a FNMR in order not to worsen the CA's ANGA rates is satisfied by the systems discussed in \cref{chap:messerman,chap:ferreira,chap:ahmed}.
 
 The experiments performed to test the discussed PA systems also had similar data collection phases to that of the CA system's experiments, in the sense that they were based on free-text.
-While the data collection in Messerman et al. \cite{Messerman} was done in an e-mail client and that of Gunetti and Picardi \cite{gnp} was done in a webform, Ferreira and Santos \cite{superResults} as well as Ahmed and Traore \cite{Ahmed} had completely uncontrolled data collection phases.
+While the data collection in Messerman et al. \cite{Messerman} was done in an e-mail client and that of Gunetti and Picardi \cite{gnp} was done in a webform, Ferreira and Santos \cite{superResults} as well as Ahmed and Traore \cite{Ahmed} had completely unconstrained data collection phases.
 This indicates that the PA performance rates may be similar on the CA system's dataset, further enhancing the confidence in parts of these systems being viable for incorporation into the CA system.
 
 Lastly, I would like to mention that there may exist other potentially viable functionalities in existing literature outside of the reviewed PA systems.
