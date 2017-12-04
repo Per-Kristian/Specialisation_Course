@@ -177,7 +177,7 @@ These rates must be looked at in relation to the PA system's block size in order
 I would also like to mention that much of the PA literature misuses the FAR and FRR terms, as they are system-level evaluation metrics, and they are often wrongly used to describe the performance of their classification algorithms.
 According to the vocabulary specified in the ISO/IEC 2382-37 standard \cite{ISO-voc}, the correct terms for algorithm level performance is False Match Rate (FMR) and False Non-Match Rate (FNMR), and I will replace wrongly used terms where applicable when discussing the literature.
 
-Bours and Mondal proposed in 2015 two new metric for evaluating the performance of CA systems, namely Average Number of Imposter Actions (ANIA) and Average Number of Genuine Actions (ANGA) \cite{CA-performance}.
+Bours and Mondal proposed in 2015 two new metrics for evaluating the performance of CA systems, namely Average Number of Imposter Actions (ANIA) and Average Number of Genuine Actions (ANGA) \cite{CA-performance}.
 These rates look at how many actions imposters and genuine users on average can perform before being rejected by the authentication system, as it often is more useful to know how often users will be locked out than the probability of that happening per sample.
 They also provide the following formulas for converting PA systems' FAR into ANIA rates and FRR into ANGA rates.
 
@@ -216,13 +216,14 @@ Periodic authentication and periodic identification are different in terms of th
 Even if the classification algorithm is inappropriate for authentication systems, these systems are relevant as they may use comparison methods such as distance measures and machine learning, which can also be used for PA.
 
 \section{Data collection}
-A large portion of the PA (and CA) authentication systems in literature had participants writing text freely during the data collection phase of the experiments, with the exception of two studies \cite{hu, KIM2017} using static text.
-Writing static text refers to typing a pre-determined text, which is generally done by having the patients manually typing a long text as they are reading it.
+A large portion of the PA (and CA) authentication systems in literature had participants writing text freely during the data collection phase of the experiments, with the exception of one \cite{hu} using static text.
+Writing static text refers to typing a pre-determined text, which is generally done by having all participants manually typing the same long text as they are reading it.
 
 Of the free-text studies, several were performed in an unconstrained manner \cite{superResults, Pinto2014, Ahmed, Janakiraman2007, BOURS201236, mondal, sliding}, meaning that the collection was performed in the background of participants' own computers as they were performing their usual tasks.
 One study captured keystrokes in the background of an e-mail application \cite{Messerman}.
 Some studies used keystroke data collected from a webform where participants were asked to write text freely before submitting the content to the researchers \cite{gnp, davoudi2009, davoudi2010, Solami}.
-Certain studies were found where the researchers gave the participants pre-defined tasks to perform while the keystroke data was being collected \cite{900words, Monrose, monaco, park}, for example writing fictional e-mails.
+Certain studies were found where the researchers gave the participants pre-defined tasks to perform while the keystroke data was being collected \cite{900words, Monrose, monaco, park, KIM2017}, for example writing fictional e-mails.
+One of these studies \cite{KIM2017} simulated free-text typing by assigning \textit{different} long texts to all participants, which they then were to write themselves while reading.
 
 While most studies have not openly shared their collected keystroke data, there exists at least three open databases containing free-text keystroke data: 
 \begin{itemize}
@@ -248,12 +249,12 @@ Many studies have used statistical approaches to classification, while others ut
 Gunetti and Picardi's \cite{gnp} R and A measures have been utilized in several researches \cite{gnp, superResults, Pinto2014, hu, sliding}.
 The R and A measures are described in \cref{chap:gnp}.
 One study only adopted the R measure \cite{Messerman}, while two studies applied their own customizations to the R measure \cite{davoudi2009, davoudi2010}.
-Other distance metrics used in literature are Euclidian \cite{Monrose}, Scaled Euclidian \cite{mondal}, Bhattacharyya \cite{Janakiraman2007} and Correlation \cite{mondal} distances.
+Other distance metrics used in literature are Euclidian \cite{Monrose}, Scaled Euclidian \cite{mondal}, Scaled Manhattan \cite{BOURS201236}, Bhattacharyya \cite{Janakiraman2007} and Correlation \cite{mondal} distances.
 Park et al. \cite{park} used a Kolmogorov-Smirnov Test as their classifier.
 \textit{K-means clustering} was used for classification in \cite{KIM2017, Solami}, and \textit{kernel ridge regression} was utilized in \cite{900words}.
 Two studies have used the \textit{neural network} machine learning algorithm \cite{Ahmed, mondal}, where one of those studies also used a \textit{support vector machine} \cite{mondal}.
-Lastly, two studies applied the \textit{k-nearest neighbor} lazy learning algorithm.
-All the systems mentioned in this chapter are summarized in \cref{tab:state}.
+Lastly, two studies applied the \textit{k-nearest neighbor} lazy learning algorithm \cite{hu, monaco}.
+All the systems mentioned in this chapter are summarized in \Cref{tab:state}.
 
 
 %NOTE: sjekk om Hu ikke har free-text
@@ -270,7 +271,6 @@ All the systems mentioned in this chapter are summarized in \cref{tab:state}.
 %NOTE: http://www.sciencedirect.com/science/article/pii/S1568494617305847 THIS ONE TOO
 %NOTE: https://www.hindawi.com/journals/tswj/2013/408280/ HAS A LOT OF DIFFERENT POINTS TO TALK ABOUT IN STATE OF ART
 \begin{table}[h]
-\label{tab:state}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{ |l|p{2.1cm}|l|p{2.15cm}|p{3cm}|p{2.3cm}|p{2.5cm}|l| } 
  \hline
@@ -286,7 +286,7 @@ All the systems mentioned in this chapter are summarized in \cref{tab:state}.
  \cite{Ahmed} & 500 & 53 & Unconstrained & Neural Networks (NN) & FMR 0.0152\%, FNMR 4.82\%, ERR 2.13\% & Dwell time, digraph flight time & Own\\\hline
  \cite{hu} & 36 & 19 & Webform, static text & R and A measures, k-Nearest Neighbor & FMR 0.045\% FNMR 0.005\% & n-graph latency & Own \\ \hline
  \cite{900words} & 900 words & 2000 & Pre-defined tasks & Kernel Ridge Regression, truncated-RBF kernel & EER 1.39\% & Trigraph flight times & \cite{chang} \\ \hline
- \cite{KIM2017} & 1000 & 150 & Static text & K-means clustering & EER 0.44\% & Dwell time, digraph latencies & Own \\ \hline
+ \cite{KIM2017} & 1000 & 150 & Pre-defined task & K-means clustering & EER 0.44\% & Dwell time, digraph latencies & Own \\ \hline
  %\cite{CPE3718} & 14 & 31 & Password & MLP Neural Network & EER 0.051\% & Static auth \\ \hline
  \cite{Solami} & 700-900 & 14 & Webform & K-means clustering & Accuracy 100\% & Digraph latency & \cite{gnp}\\ \hline
  \cite{Janakiraman2007} & Minimum 2 & 22 & Unconstrained & Bhattacharyya distance & Accuracy 70\%-100\% & Dwell time, digraph flight time & Own\\ \hline
@@ -299,7 +299,8 @@ All the systems mentioned in this chapter are summarized in \cref{tab:state}.
 
 \end{tabular}
 }
-\caption{Summary of state of the art in PA and CA systems. In the database (DB) column, systems marked with a star * have released their database to the public.}
+\caption{Summary of state of the art in PA and CA systems. In the database (DB) column, systems marked with a star * have released their database to the public. This table is also presented in my Research Project Planning report.}
+\label{tab:state}
 \end{table}
 
 % Enrollment size:
@@ -429,7 +430,7 @@ The experimental results for smaller block sizes showed less promising results.
  \bf Sample length & \bf FMR (\%) & \bf FNMR (\%) & \bf ANIA & \bf ANGA \\
  4/4 & 0.005 & 4.833 & 800 & 16553 \\
  3/4 & 0.029 & 9.333 & 600.17 & 6429\\
- 2/2 & 0.063 & 15.5 & 400.116 & 4286
+ 2/4 & 0.063 & 15.5 & 400.116 & 4286
 \end{tabular}
 \caption{Experimental results using different block (sample) lengths. Original table from \cite{gnp} is extended with ANIA and ANGA rates.}
 \label{tab:gnp-blocksizes}
@@ -866,6 +867,7 @@ The fact that they used the \textit{first} 1500 keystrokes for building user pro
 Immediately after a user installs the keystroke monitoring software is probably a period of time where they are more conscious about the fact that their typing patterns are being collected. 
 This could lead to some tension which could lead to slight variations representing uncharacteristic behavior.
 Extracting keystrokes slightly further into the collection phase could therefore be a viable alternative.
+The keystrokes from the first part could then be used for testing instead, or possibly even ignored.
 
 %Positive: high variation in collection. Very old computers though (probably old dataset), but that doesnt necessarily mean anything.
 
@@ -883,7 +885,7 @@ Scaling the system into much larger sample sizes seems to defeat the purpose of 
 Ahmed and Traore \cite{Ahmed} claim that their system has a far lower processing time compared to the state of the art, with Gunetti and Picardi \cite{gnp} being mentioned in that context.
 Unfortunately, they only specify the time needed to train the neural networks, which was below two seconds for both networks on a 2.8 GHz processor.
 In case the user profile needs to be updated, this should be fast enough to be done in periods of inactivity.
-That aside, the processing time for the authentication should probably have been included.
+That aside, the processing time for the neural networks is likely to be negligible.
 
 %Negative: Must be retrained
 %Negative: They claim "far lower processing time" than 
