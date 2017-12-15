@@ -33,6 +33,7 @@
 \usepackage{hyperref}
 \usepackage{mdwlist}
 \usepackage{url}
+\usepackage{cite}
 \usepackage{here}
 \usepackage{subcaption}
 \usepackage{cleveref}
@@ -71,11 +72,21 @@ NTNU in Gj\o{}ovik
 
 \begin{abstract}
 
-User authentication based on keystroke dynamics is an active research area and several different methods have been proposed to improve the performance and viability of this authentication method.
-A specific sub-category of authentication systems based on keystroke dynamics record the user's keystrokes passively during the user session and attempt to remove access if the recorded behavior does not match that of the user account's true owner.
-Most of these systems analyze the typing behavior \textit{periodically}, while a few others do so continuously after every keystroke.
-The possibilities of incorporating mechanisms from \textit{periodic} authentication systems into an existing \textit{continuous} authentication system are explored in this paper.
-This is done by a state of the art survey, as well as detailed discussions on a selected number of proposed systems.
+After a user has logged into a system, there are often no further checks to see if the \textit{current} user has changed.
+If the genuine user forgets to lock the computer or log out before they physically leave, an imposter may seize control of their user account.
+This gives the imposter opportunities to perform malicious activities such as identity theft and stealing information which can be leveraged by blackmailing the genuine user.
+Therefore, being able to detect such imposters would enable the system to remove their access, hopefully before they were able to able to cause harm.
+
+User authentication systems can use keystroke dynamics to in an attempt to solve this problem. 
+One way of doing this is observing the current user's typing patterns while they are using the system, and comparing it to the already known typing patterns of the genuine user.
+If the current user types in a sufficiently similar manner to the genuine user, they may continue using the system.
+However, if the system does not recognize their patterns, they will be locked out in order to protect the genuine user.
+
+Developing such systems is an active research area and several different methods have been proposed to improve the performance and viability of this authentication method.
+Most of these systems analyze the typing behavior \textit{periodically} by recording a large amount of keystrokes and then statistically analyzing the behavior in a retroactive manner.
+Another type of system performs checks \textit{continuously} after every recorded keystroke, though they only have a few keystrokes to base every decision on.
+The possibility of incorporating mechanisms from \textit{periodic} authentication systems into an existing \textit{continuous} authentication system are explored in this paper.
+This is done by means of a state of the art survey, as well as detailed discussions on a selected number of periodic authentication systems.
 
 \end{abstract}
 
@@ -95,7 +106,7 @@ Functionality found to be especially useful in that regard will be highlighted o
 
 Background information on authentication based on keystroke dynamics will be given in \cref{chap:background}, including an introductory explanation of biometrics and relevant terms used in the research field.
 In \cref{chap:state}, an overview of the general state of the art will be covered.
-\Cref{chap:gnp} contains a review of PA system using a statistical approach of which several other researchers have based their own systems upon.
+\Cref{chap:gnp} contains a review of a PA system using a statistical approach of which several other researchers have based their own systems upon.
 \Cref{chap:messerman} and \cref{chap:ferreira} describe two such systems, each with their own methods for improving the original system.
 A PA system based on machine learning is discussed in \cref{chap:ahmed}, before conclusions are made in an overall discussion in \cref{chap:conclusion}.
 
@@ -212,7 +223,7 @@ The performance metrics used in Mondal's \cite{mondal} CA system is ANIA and ANG
 \label{chap:state}
 This section gives an overview of the state of the art, and the different methods and approaches taken by researchers.
 While this literature study has a focus on PA systems, I have also included CA \cite{BOURS201236, mondal} and periodic identification systems \cite{Solami, Janakiraman2007, Monrose} in the state of the art, as they are relevant to the topic.
-Periodic authentication and periodic identification are different in terms of the classification algorithms used, as identification systems need to compare the typing behavior of the current user to every legal user in the system in order to determine who it is.
+Periodic authentication and periodic identification are different in terms of the classification algorithms used, as identification systems need to compare the typing behavior of the current user to every legal user in the system in order to determine \textit{who} it is.
 Even if the classification algorithm is inappropriate for authentication systems, these systems are relevant as they may use comparison methods such as distance measures and machine learning, which can also be used for PA.
 
 \section{Data collection}
@@ -233,12 +244,12 @@ While most studies have not openly shared their collected keystroke data, there 
     
     \item Huang et al.'s \cite{sliding} database contains around 9.7 million keystrokes from 95 users over the course of two years.
 \end{itemize}
-Researchers have generally performed their own data collection, though at least three studies \cite{davoudi2009, davoudi2010, Solami} used Gunetti and Picardi's \cite{gnp} dataset, excluding their own study.
+Researchers have generally performed their own data collection, though at least three studies \cite{davoudi2009, davoudi2010, Solami} used Gunetti and Picardi's \cite{gnp} dataset.
 Eleven studies involved 30 participants or more \cite{gnp, Messerman, superResults, Ahmed, 900words, KIM2017, Monrose, sliding, mondal, monaco, park}, one of which involved 2000 users \cite{900words}.
 
 \section{Feature extraction}
 All of the mentioned studies extracted feature vectors using various types of latencies between consecutive keystrokes, however nine of them \cite{superResults, Pinto2014, Ahmed, KIM2017, Janakiraman2007, Monrose, BOURS201236, mondal, monaco} also extracted dwell times of single key actions.
-For consecutive keystrokes, eleven studies \cite{davoudi2009, davoudi2010, Ahmed, KIM2017, Solami, Janakiraman2007, Monrose, BOURS201236, mondal, monaco, park} considered only digraphs, one considered only trigraphs \cite{900words}, while the rest considered n-graphs with multiple values of n where $1<n$.
+For consecutive keystrokes, eleven studies \cite{davoudi2009, davoudi2010, Ahmed, KIM2017, Solami, Janakiraman2007, Monrose, BOURS201236, mondal, monaco, park} considered only digraphs, one considered only trigraphs \cite{900words}, while the rest considered n-graphs with multiple values of n where $n>1$.
 
 Out of the periodic authentication and identification systems, the block length used for feature extraction of probes was 500 keystrokes or less in seven studies \cite{Messerman, superResults, Pinto2014, Ahmed, hu, park}.
 Instead of using a fixed block length, Huang et al. \cite{sliding} proposed a time-based PA system which performs an authentication every minute, examining all keystroke actions performed during the last minute of the user session.
@@ -254,7 +265,15 @@ Park et al. \cite{park} used a Kolmogorov-Smirnov Test as their classifier.
 \textit{K-means clustering} was used for classification in \cite{KIM2017, Solami}, and \textit{kernel ridge regression} was utilized in \cite{900words}.
 Two studies have used the \textit{neural network} machine learning algorithm \cite{Ahmed, mondal}, where one of those studies also used a \textit{support vector machine} \cite{mondal}.
 Lastly, two studies applied the \textit{k-nearest neighbor} lazy learning algorithm \cite{hu, monaco}.
-All the systems mentioned in this chapter are summarized in \Cref{tab:state}.
+
+\section{Performance}
+As authors of dynamic authentication systems use different metrics to describe their system's performance, comparing them becomes a difficult task.
+We can point out that one system \cite{Solami} achieved an accuracy of 100\%, however this is a performance metric for \textit{identification} systems, meaning that it correctly guesses the identity of the user 100\% of the time.
+Moreover, we can highlight that the authors of eight PA systems \cite{gnp, davoudi2009, davoudi2010, Ahmed, hu, KIM2017, sliding, park} reported FMRs of 1\% or lower, which means that they fail to detect imposters only 1\% of the time or less frequently.
+Such low FMRs may sound promising, but it is also important to consider FNMR to see how often genuine users are falsely detected as imposters.
+Not only that, but there are several other properties of each system that must be taken into consideration in order for performance rates to carry any valuable meaning.
+The previous subsections of this chapter describe some of those properties.
+Therefore, all the mentioned systems are summarized in \Cref{tab:state} to provide an overview of the state of the art.
 
 
 %NOTE: sjekk om Hu ikke har free-text
@@ -299,7 +318,7 @@ All the systems mentioned in this chapter are summarized in \Cref{tab:state}.
 
 \end{tabular}
 }
-\caption{Summary of state of the art in PA and CA systems. In the database (DB) column, systems marked with a star * have released their database to the public. This table is also presented in my Research Project Planning report.}
+\caption{Summary of state of the art in PA and CA systems. In the database (DB) column, systems marked with a star * have released their database to the public. This table is also presented in my IMT4205 Research Project Planning report \cite{nilsenRPP}.}
 \label{tab:state}
 \end{table}
 
